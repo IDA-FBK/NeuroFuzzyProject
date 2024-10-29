@@ -7,13 +7,14 @@ from sklearn.metrics import ConfusionMatrixDisplay
 from experiments.calculate import calculate_consistency_matrix, calculate_distinguishability_matrix
 
 
-def plot_class_confusion_matrix(cm, labels, path_to_exp_results):
+def plot_class_confusion_matrix(split, cm, labels, path_to_exp_results):
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
     disp.plot(cmap=plt.cm.Blues)
 
     # Save confusion matrix plot
-    plt.title("Confusion Matrix")
-    plt.savefig(path_to_exp_results+"confusion_matrix.png")
+    plt.title(f"{split} - Confusion Matrix")
+    plt.savefig(path_to_exp_results+f"{split}_confusion_matrix.png")
+
 
 
 def plot_distinguishability_heatmap(rules_dictionary, path_to_results):

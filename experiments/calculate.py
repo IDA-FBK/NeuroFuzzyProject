@@ -3,29 +3,41 @@ import numpy as np
 
 def calculate_avg_results(results_df, path_to_results):
     """
-       Calculate the mean and standard deviation of resultsand save them to a CSV file.
+        Calculate the mean and standard deviation of results and save them to a CSV file.
 
-       Parameters:
-       - results_df (DataFrame): DataFrame containing results with columns: 'NeuronType', 'MFs', 'Accuracy', 'Fscore', 'Recall', 'Precision'.
-       - path_to_results (str): Path to the directory where the CSV file with mean and standard deviation results will be saved.
+        Parameters:
+            - results_df (DataFrame): DataFrame containing train and test runs results.
+            - path_to_results (str): Path to the directory where the CSV file with mean and standard deviation results will be saved.
 
-       Returns:
-       None
+        Returns:
+            None
     """
+
 
     # Define column names for mean and standard deviation
     mean_std_cnames = ["mean", "std"]
 
-    # Group by NeuronType and MFs, then calculate mean and standard deviation
     agg_grouped_results = results_df.groupby(["NeuronType", "MFs"]).agg({
-        "Accuracy": mean_std_cnames, "Fscore": mean_std_cnames,
-        "Recall": mean_std_cnames, "Precision": mean_std_cnames,
-        "Specificity": mean_std_cnames
+        "Train_Acc.": mean_std_cnames, "Train_F1": mean_std_cnames,
+        "Train_Rec.": mean_std_cnames, "Train_Prec.": mean_std_cnames,
+        "Train_Spec.": mean_std_cnames,
+        "Test_Acc.": mean_std_cnames, "Test_F1": mean_std_cnames,
+        "Test_Rec.": mean_std_cnames, "Test_Prec.": mean_std_cnames,
+        "Test_Spec.": mean_std_cnames
     })
+
     # Rename columns for clarity
     agg_grouped_results.columns = [
-        "Accuracy Mean", "Accuracy Std", "Fscore Mean", "Fscore Std", "Recall Mean", "Recall Std", "Precision Mean",
-        "Precision Std", "Specificity Mean", "Specificity Std"
+        "Train Acc. Mean", "Train Ac.y Std",
+        "Train F1 Mean", "Train F1 Std",
+        "Train Rec. Mean", "Train Rec. Std",
+        "Train Prec. Mean", "Train Prec. Std",
+        "Train Spec. Mean", "Train Spec. Std",
+        "Test Accu.", "Test Acc. Std",
+        "Test F1", "Test F1 Std",
+        "Test Rec.", "Test Rec. Std",
+        "Test Prec.", "Test Prec. Std",
+        "Test Spec.", "Test Spec. Std"
     ]
 
     # Replace all NaN values in the DataFrame with 0

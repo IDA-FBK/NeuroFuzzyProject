@@ -74,7 +74,9 @@ def run_experiment(
 
     print("\nSummary of Performance Metrics:")
     fnn_model.train_model(x_train, y_train)
-    evaluation_metrics = fnn_model.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
+    evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
+    evaluation_metrics_test = fnn_model.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
+
     rules = fnn_model.generate_fuzzy_rules()
 
     # Save fuzzy rules to a file
@@ -86,17 +88,27 @@ def run_experiment(
     save_list_in_a_file(fnn_model.axioms, path_to_exp_results + "fuzzy_axiom.txt")
 
     # Plot confusion matrix of class prediction
-    plot_class_confusion_matrix(evaluation_metrics["cm"], evaluation_metrics["unique_labels"], path_to_exp_results)
+    plot_class_confusion_matrix("TRAIN", evaluation_metrics_train["cm"], evaluation_metrics_train["unique_labels"],
+                                path_to_exp_results)
+    plot_class_confusion_matrix("TEST", evaluation_metrics_test["cm"], evaluation_metrics_test["unique_labels"],
+                                path_to_exp_results)
 
+
+    # Append both train and test metrics to the DataFrame
     results_df.loc[len(results_df)] = [
         i_seed,
         neuron_type,
         num_mfs,
-        evaluation_metrics["accuracy"],
-        evaluation_metrics["fscore"],
-        evaluation_metrics["recall"],
-        evaluation_metrics["precision"],
-        evaluation_metrics["specificity"],
+        evaluation_metrics_train["accuracy"],  # Training accuracy
+        evaluation_metrics_train["fscore"],  # Training F-score
+        evaluation_metrics_train["recall"],  # Training Recall
+        evaluation_metrics_train["precision"],  # Training Precision
+        evaluation_metrics_train["specificity"],  # Training Specificity
+        evaluation_metrics_test["accuracy"],  # Testing accuracy
+        evaluation_metrics_test["fscore"],  # Testing F-score
+        evaluation_metrics_test["recall"],  # Testing Recall
+        evaluation_metrics_test["precision"],  # Testing Precision
+        evaluation_metrics_test["specificity"],  # Testing Specificity
     ]
 
     #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
@@ -142,14 +154,8 @@ if __name__ == "__main__":
     # this store the results of each run
     results_df = pd.DataFrame(
         columns=[
-            "Seed",
-            "NeuronType",
-            "MFs",
-            "Accuracy",
-            "Fscore",
-            "Recall",
-            "Precision",
-            "Specificity",
+            "Seed", "NeuronType", "MFs", "Train_Acc.", "Train_F1", "Train_Rec.", "Train_Prec.",
+            "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec.",
         ]
     )
 
@@ -178,3 +184,6 @@ if __name__ == "__main__":
     results_df.to_csv(path_to_results + "runs_results.csv")
     # compute mean and sd
     calculate_avg_results(results_df, path_to_results)
+
+
+
