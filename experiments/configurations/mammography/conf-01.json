@@ -1,0 +1,16 @@
+{
+  "num_seeds": 10,
+  "neuron_types": [
+    "andneuron",
+    "orneuron"
+  ],
+  "num_mfs_options": [
+    2,
+    3,
+    4
+  ],
+  "activation": "linear",
+  "optimizer": "moore-penrose",
+  "data_encoding":"one-hot-encoding",
+  "pred_method": "argmax"
+}
