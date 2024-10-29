@@ -85,7 +85,8 @@ def run_experiment(
     fnn_model.generate_fuzzy_axioms()
 
     # Save axioms in a file
-    save_list_in_a_file(fnn_model.axioms, path_to_exp_results + "fuzzy_axiom.txt")
+    # TODO: These axioms were related to the integration with LTN Framework (To me we can remove it)
+    # save_list_in_a_file(fnn_model.axioms, path_to_exp_results + "fuzzy_axiom.txt")
 
     # Plot confusion matrix of class prediction
     plot_class_confusion_matrix("TRAIN", evaluation_metrics_train["cm"], evaluation_metrics_train["unique_labels"],
