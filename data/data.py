@@ -45,6 +45,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         elif data_encoding == "no-encoding":
             # Convert to binary classification problem
             y[y == 0] = -1
+            map_class_dict[-1] = 0
             y[y > 0] = 1
             y.reshape(-1, 1)
 
@@ -82,7 +83,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 2
             y = y.reshape(-1, 1)
 
-    elif dataset == "mammographic":
+    elif dataset == "mammography":
         # Assuming the diabetes dataset is stored in 'data/mammographic_masses.txt'
         file_path = "data/datasets/mammographic_masses.txt"
 
