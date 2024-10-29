@@ -16,7 +16,7 @@
 ### 1. Set up the Project Environment
 
 - First, ensure you have Conda installed. If not, follow the instructions [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
-- Then, create the project environment using the provided fuzzyltn_env.yml file:
+- Then, create the project environment using the provided environment.yml file:
   ```bash
   conda env create -f environment.yml
   ```
