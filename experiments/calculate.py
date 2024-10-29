@@ -28,6 +28,11 @@ def calculate_avg_results(results_df, path_to_results):
         "Precision Std", "Specificity Mean", "Specificity Std"
     ]
 
+    # Replace all NaN values in the DataFrame with 0
+    # If a group has only one value, the standard deviation is not defined (since standard deviation requires at least two values).
+    # In this case, it results in NaN unless handled explicitly
+    agg_grouped_results = agg_grouped_results.fillna(0)
+
     print(agg_grouped_results)
     # number of decimals is set to 3
     agg_grouped_results.to_csv(path_to_results + "mean_std_results.csv", float_format="%.3f")
