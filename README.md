@@ -1,6 +1,4 @@
-# FuzzyLTN
-
-A novel interpretable and adaptable neuro-symbolic framework that integrates Fuzzy Systems with Logical Tensor Networks.
+# Neuro-Fuzzy project
 
 ## Directories
 
