@@ -1,13 +1,7 @@
-from experiments.calculate import (
-    calculate_ecompleteness_and_get_uncovered_samples,
-    calculate_similarity_matrix,
-)
-
+from experiments.calculate import calculate_ecompleteness_and_get_uncovered_samples, calculate_similarity_matrix
 from experiments.plots import (
-    plot_consistency_matrix,
-    plot_distinguishability_heatmap,
-    plot_similarity_matrix,
-    plots_uncovered_samples,
+    plot_consistency_matrix, plot_distinguishability_heatmap,
+    plot_similarity_matrix, plots_uncovered_samples,
 )
 
 

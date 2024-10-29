@@ -12,8 +12,6 @@ def calculate_avg_results(results_df, path_to_results):
         Returns:
             None
     """
-
-
     # Define column names for mean and standard deviation
     mean_std_cnames = ["mean", "std"]
 

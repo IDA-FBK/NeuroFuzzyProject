@@ -6,10 +6,12 @@ from sklearn.datasets import load_iris
 
 
 def get_one_encoding(labels):
-    encoder = OneHotEncoder(sparse_output=False)  # Set sparse_output=False to get dense array
+    # Set sparse_output=False to get dense array
+    encoder = OneHotEncoder(sparse_output=False)
     one_hot_encoded = encoder.fit_transform(labels.reshape(-1, 1))
 
     return one_hot_encoded
+
 
 def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     """
@@ -17,7 +19,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
     Parameters:
         - dataset (str): Name of the dataset.
-        - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
+        - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data (i.e., target labels)
           is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
         - seed (int): Seed for random number generation (used only for synthetic exp).
         - test_size (float): Proportion of the dataset to include in the test split.

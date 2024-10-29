@@ -36,8 +36,7 @@ def run_experiment(
     - test_data (tuple): Tuple containing features and labels for the testing set.
     - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
       is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
-    - pred_method (str): The prediction method to be used by the FNN model. Example: 'sign', which may
-      indicate a particular thresholding or decision strategy for final predictions.
+    - pred_method (str): The prediction method to be used by the FNN model (e.g., argmax).
     - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
       to their original dataset class values.
     - neuron_type (str): Type of neuron to use in the FNN model.

@@ -143,6 +143,7 @@ def plot_similarity_matrix(similarity_matrix, path_to_results):
     plt.savefig(path_to_results + "similarity_matrix.png")
     plt.close()
 
+
 def visualize_membership_functions(feature_index, centers, sigmas):
     """
     Visualizes the membership functions for a given feature.

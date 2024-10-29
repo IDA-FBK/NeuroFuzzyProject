@@ -470,6 +470,7 @@ class FNNModel:
     #
     #     plt.show()
 
+    # TODO: old part related to LTN integratin, probably we can remove it
     def generate_fuzzy_axioms(self):
         """
         Generate logical axioms from fuzzy rules, including the output weights,
