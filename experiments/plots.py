@@ -14,7 +14,7 @@ def plot_class_confusion_matrix(split, cm, labels, path_to_exp_results):
     # Save confusion matrix plot
     plt.title(f"{split} - Confusion Matrix")
     plt.savefig(path_to_exp_results+f"{split}_confusion_matrix.png")
-
+    plt.close()
 
 
 def plot_distinguishability_heatmap(rules_dictionary, path_to_results):
@@ -22,11 +22,11 @@ def plot_distinguishability_heatmap(rules_dictionary, path_to_results):
     Plot the distinguishability heatmap for the fuzzy rules.
 
     Parameters:
-    - rules_dictionary (list): List containing dictionaries representing fuzzy rules.
-    - path_to_results (str): Path to the directory where the heatmap image will be saved.
+        - rules_dictionary (list): List containing dictionaries representing fuzzy rules.
+        - path_to_results (str): Path to the directory where the heatmap image will be saved.
 
     Returns:
-    None
+        None
     """
 
     # Distinguishability
@@ -56,8 +56,8 @@ def plot_consistency_matrix(V, path_to_results):
     Plot the consistency matrix using a heatmap.
 
     Parameters:
-        V (numpy.ndarray): The matrix of logical neuron outputs used for generating the consistency matrix.
-        path_to_results (str): Path to the directory where the heatmap image will be saved.
+        - V (numpy.ndarray): The matrix of logical neuron outputs used for generating the consistency matrix.
+        - path_to_results (str): Path to the directory where the heatmap image will be saved.
 
     Returns:
         None
@@ -90,9 +90,9 @@ def plots_uncovered_samples(x_test, uncovered_samples_indices, path_to_results):
     Plot the test samples with uncovered samples highlighted.
 
     Parameters:
-        x_test (numpy.ndarray): Test samples.
-        uncovered_samples_indices (numpy.ndarray): Indices of uncovered samples.
-        path_to_results (str): Path to the directory where the plot will be saved.
+        - x_test (numpy.ndarray): Test samples.
+        - uncovered_samples_indices (numpy.ndarray): Indices of uncovered samples.
+        - path_to_results (str): Path to the directory where the plot will be saved.
 
     Returns:
         None
@@ -121,8 +121,8 @@ def plot_similarity_matrix(similarity_matrix, path_to_results):
     Plots a similarity matrix using a heatmap.
 
     Parameters:
-        similarity_matrix (numpy.ndarray): A numpy array representing the similarity matrix.
-        path_to_results (str): Path to the directory where the plot will be saved.
+        - similarity_matrix (numpy.ndarray): A numpy array representing the similarity matrix.
+        - path_to_results (str): Path to the directory where the plot will be saved.
 
     Returns:
         None
@@ -148,9 +148,9 @@ def visualize_membership_functions(feature_index, centers, sigmas):
     Visualizes the membership functions for a given feature.
 
     Parameters:
-        feature_index (int): Index of the feature.
-        centers (numpy.ndarray): Array containing the centers of the membership functions.
-        sigmas (numpy.ndarray): Array containing the standard deviations of the membership functions.
+        - feature_index (int): Index of the feature.
+        - centers (numpy.ndarray): Array containing the centers of the membership functions.
+        - sigmas (numpy.ndarray): Array containing the standard deviations of the membership functions.
 
     Returns:
         None

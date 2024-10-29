@@ -111,6 +111,7 @@ def run_experiment(
         evaluation_metrics_test["specificity"],  # Testing Specificity
     ]
 
+    # TODO: evaluate interpretabilty is in stand-by
     #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
 
 

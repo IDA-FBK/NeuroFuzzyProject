@@ -16,13 +16,13 @@ def evaluate_interpretability(fnn_model, x_test, path_to_results, epsilon=0.136)
     Evaluate the interpretability of the FNN model by analyzing various interpretability metrics.
 
     Parameters:
-    - fnn_model (FNNModel): Instance of the FNN model.
-    - x_test (numpy.ndarray): Features of the test dataset.
-    - path_to_results (str): Path to the directory where evaluation results will be saved.
-    - epsilon (float): Threshold for determining rule activation in e-completeness calculation. Default is 0.136.
+        - fnn_model (FNNModel): Instance of the FNN model.
+        - x_test (numpy.ndarray): Features of the test dataset.
+        - path_to_results (str): Path to the directory where evaluation results will be saved.
+        - epsilon (float): Threshold for determining rule activation in e-completeness calculation. Default is 0.136.
 
     Returns:
-    None
+        None
     """
 
     # if too slow comment this part

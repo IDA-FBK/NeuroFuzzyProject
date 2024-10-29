@@ -3,13 +3,13 @@ import os.path
 
 import numpy as np
 from numpy.linalg import pinv
-import pandas as pd
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 
 from data.data import get_data
 from experiments.configurations.configurations import get_configuration
 from experiments.plots import plot_class_confusion_matrix
 
+#### This could be considered a baseline where the pseudoinverse is computed on the normalized features. ####
 
 def compute_metrics(y_true, output_v):
     if data_encoding == "no-encoding" and pred_method == "sign":
