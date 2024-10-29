@@ -31,15 +31,15 @@ class FNNModel:
         Initialize a Fuzzy Neural Network (FNN) model with the specified configuration.
 
         Parameters:
-        - num_mfs (int): Number of membership functions for each input dimension.
-        - neuron_type (str): Type of neuron to use in the FNN model. Default is "andneuron".
-        - activation (str): Activation function to use in the FNN model. Default is "linear".
-        - optimizer (str): Optimizer algorithm to use for training the FNN model. Default is "moore-penrose".
-        - visualizeMF (bool): Whether to visualize membership functions during training. Default is False.
-        - rng_seed (int or None): Seed for random number generation. If None, a default RNG is used. Default is None.
+            - num_mfs (int): Number of membership functions for each input dimension.
+            - neuron_type (str): Type of neuron to use in the FNN model. Default is "andneuron".
+            - activation (str): Activation function to use in the FNN model. Default is "linear".
+            - optimizer (str): Optimizer algorithm to use for training the FNN model. Default is "moore-penrose".
+            - visualizeMF (bool): Whether to visualize membership functions during training. Default is False.
+            - rng_seed (int or None): Seed for random number generation. If None, a default RNG is used. Default is None.
 
         Returns:
-        None
+            None
         """
 
         self.model = None
@@ -65,11 +65,11 @@ class FNNModel:
         Performs the fuzzification layer operation for the input data.
 
         Parameters:
-        - x (numpy.ndarray): Input data of shape (num_samples, num_features).
+            - x (numpy.ndarray): Input data of shape (num_samples, num_features).
 
         Returns:
-        - fuzzy_outputs (numpy.ndarray): Fuzzy outputs after fuzzification, with shape (num_samples, total_fuzzy_neurons).
-          Each row represents the fuzzy output for a sample, and each column represents the degree of membership to a fuzzy set.
+            - fuzzy_outputs (numpy.ndarray): Fuzzy outputs after fuzzification, with shape (num_samples, total_fuzzy_neurons).
+              Each row represents the fuzzy output for a sample, and each column represents the degree of membership to a fuzzy set.
         """
 
         num_samples, num_features = x.shape
@@ -118,7 +118,7 @@ class FNNModel:
 
     def generate_rules_dictionary(self):
         """
-        Generates a dictionary of rules based on combinations of MFs for all characteristics.
+            Generates a dictionary of rules based on combinations of MFs for all characteristics.
         """
         rules_dictionary = []
         num_features = len(self.mf_params)
@@ -146,12 +146,12 @@ class FNNModel:
         Calculates the logical output of the fuzzy neural network based on the fuzzy outputs and neuron weights.
 
         Parameters:
-        - fuzzy_outputs (numpy.ndarray): Fuzzy outputs after fuzzification, with shape (num_samples, total_fuzzy_neurons).
-          Each row represents the fuzzy output for a sample, and each column represents the degree of membership to a fuzzy set.
+            - fuzzy_outputs (numpy.ndarray): Fuzzy outputs after fuzzification, with shape (num_samples, total_fuzzy_neurons).
+              Each row represents the fuzzy output for a sample, and each column represents the degree of membership to a fuzzy set.
         Returns:
-        - logic_output (numpy.ndarray): Logical output of the fuzzy neural network, with shape (num_samples, total_fuzzy_neurons).
-          Each row represents the logical output for a sample, and each column represents the output of a logical neuron
-          corresponding to a specific combination of membership functions for input features.
+            - logic_output (numpy.ndarray): Logical output of the fuzzy neural network, with shape (num_samples, total_fuzzy_neurons).
+              Each row represents the logical output for a sample, and each column represents the output of a logical neuron
+              corresponding to a specific combination of membership functions for input features.
         """
 
         num_samples = fuzzy_outputs.shape[0]
@@ -197,11 +197,11 @@ class FNNModel:
         Trains the fuzzy neural network model using the provided training data.
 
         Parameters:
-        - x_train (numpy.ndarray): Input features of the training data.
-        - y_train (numpy.ndarray): Target labels of the training data.
+            - x_train (numpy.ndarray): Input features of the training data.
+            - y_train (numpy.ndarray): Target labels of the training data.
 
         Returns:
-        None
+            None
         """
 
         # Adjust the trainModel method to capture the return value from fuzzificationLayer
@@ -214,6 +214,7 @@ class FNNModel:
             # Use Moore-Penrose pseudo-inverse for training
             self.V = np.dot(pinv(logic_outputs), y_train)
         elif self.optimizer == "adam":
+            # TODO: up to now this is not used
             # Use a neural network for training
             self.neural_network_layer(logic_outputs, y_train)
             last_layer_weights = self.model.layers[-1].get_weights()[0]
@@ -221,6 +222,7 @@ class FNNModel:
             self.VR = np.array((last_layer_weights.flatten()))
             self.V = last_layer_weights.flatten()
 
+    # TODO: up to now neural network layer is not used
     def neural_network_layer(self, x, y):
         self.model = Sequential(
             [
@@ -272,6 +274,8 @@ class FNNModel:
         if self.optimizer == "moore-penrose":
             output_v = np.dot(logic_outputs_test, self.V)
 
+            # TODO: no-encoding + sign was related to the previous version (we may consider to remove it),
+            # the 'official' and current version is  the ones with one hot encoding + argmax
             if data_encoding == "no-encoding" and pred_method=="sign":
                 y_pred = np.sign(output_v)
 
@@ -352,7 +356,7 @@ class FNNModel:
         Generate fuzzy rules based on the weights of the neurons in the logic layer.
 
         Returns:
-        list: A list of fuzzy rules, where each rule is represented as a string.
+            list: A list of fuzzy rules, where each rule is represented as a string.
         """
         # Preparation of rule strings
         rules = []

@@ -3,30 +3,47 @@ import numpy as np
 
 def calculate_avg_results(results_df, path_to_results):
     """
-       Calculate the mean and standard deviation of resultsand save them to a CSV file.
+        Calculate the mean and standard deviation of results and save them to a CSV file.
 
-       Parameters:
-       - results_df (DataFrame): DataFrame containing results with columns: 'NeuronType', 'MFs', 'Accuracy', 'Fscore', 'Recall', 'Precision'.
-       - path_to_results (str): Path to the directory where the CSV file with mean and standard deviation results will be saved.
+        Parameters:
+            - results_df (DataFrame): DataFrame containing train and test runs results.
+            - path_to_results (str): Path to the directory where the CSV file with mean and standard deviation results will be saved.
 
-       Returns:
-       None
+        Returns:
+            None
     """
+
 
     # Define column names for mean and standard deviation
     mean_std_cnames = ["mean", "std"]
 
-    # Group by NeuronType and MFs, then calculate mean and standard deviation
     agg_grouped_results = results_df.groupby(["NeuronType", "MFs"]).agg({
-        "Accuracy": mean_std_cnames, "Fscore": mean_std_cnames,
-        "Recall": mean_std_cnames, "Precision": mean_std_cnames,
-        "Specificity": mean_std_cnames
+        "Train_Acc.": mean_std_cnames, "Train_F1": mean_std_cnames,
+        "Train_Rec.": mean_std_cnames, "Train_Prec.": mean_std_cnames,
+        "Train_Spec.": mean_std_cnames,
+        "Test_Acc.": mean_std_cnames, "Test_F1": mean_std_cnames,
+        "Test_Rec.": mean_std_cnames, "Test_Prec.": mean_std_cnames,
+        "Test_Spec.": mean_std_cnames
     })
+
     # Rename columns for clarity
     agg_grouped_results.columns = [
-        "Accuracy Mean", "Accuracy Std", "Fscore Mean", "Fscore Std", "Recall Mean", "Recall Std", "Precision Mean",
-        "Precision Std", "Specificity Mean", "Specificity Std"
+        "Train Acc. Mean", "Train Ac.y Std",
+        "Train F1 Mean", "Train F1 Std",
+        "Train Rec. Mean", "Train Rec. Std",
+        "Train Prec. Mean", "Train Prec. Std",
+        "Train Spec. Mean", "Train Spec. Std",
+        "Test Accu.", "Test Acc. Std",
+        "Test F1", "Test F1 Std",
+        "Test Rec.", "Test Rec. Std",
+        "Test Prec.", "Test Prec. Std",
+        "Test Spec.", "Test Spec. Std"
     ]
+
+    # Replace all NaN values in the DataFrame with 0
+    # If a group has only one value, the standard deviation is not defined (since standard deviation requires at least two values).
+    # In this case, it results in NaN unless handled explicitly
+    agg_grouped_results = agg_grouped_results.fillna(0)
 
     print(agg_grouped_results)
     # number of decimals is set to 3
@@ -38,11 +55,11 @@ def calculate_overlap(mu1, sigma1, mu2, sigma2):
     Calculates the overlap between two Gaussian membership functions.
 
     Parameters:
-    - mu1, sigma1 (float): Mean and standard deviation of the first Gaussian membership function.
-    - mu2, sigma2 (float): Mean and standard deviation of the second Gaussian membership function.
+        - mu1, sigma1 (float): Mean and standard deviation of the first Gaussian membership function.
+        - mu2, sigma2 (float): Mean and standard deviation of the second Gaussian membership function.
 
     Return:
-    - overlap (float): The overlap between the two membership functions.
+        - overlap (float): The overlap between the two membership functions.
     """
 
     d = np.abs(mu1 - mu2)
@@ -56,11 +73,11 @@ def calculate_e_completeness(Z, epsilon):
     Calculates the e-completeness score for the test dataset based on the activations of the logical neurons.
 
     Parameters:
-    - Z (numpy.ndarray): Matrix of logical neuron outputs for the test set, where each column represents a neuron.
-    - epsilon (float) : Threshold for determining whether a rule has been activated.
+        - Z (numpy.ndarray): Matrix of logical neuron outputs for the test set, where each column represents a neuron.
+        - epsilon (float) : Threshold for determining whether a rule has been activated.
 
     Return:
-    - e_completeness_score (float): The percentage of samples that are "covered" by at least one activated rule above epsilon.
+        - e_completeness_score (float): The percentage of samples that are "covered" by at least one activated rule above epsilon.
     """
 
     # Checks whether each rule has been activated above epsilon for each sample
@@ -80,15 +97,15 @@ def calculate_consistency_matrix(V):
         Calculate a consistency matrix for the set of fuzzy rules based on the rule consequents.
 
         Parameters:
-        - V (numpy.ndarray): An array representing the consequents of fuzzy rules. Each row represents a rule,
-          and each column represents the consequent values for each dimension.
+            - V (numpy.ndarray): An array representing the consequents of fuzzy rules. Each row represents a rule,
+              and each column represents the consequent values for each dimension.
 
         Returns:
-        - consistency_matrix (numpy.ndarray): A square matrix representing the consistency between fuzzy rules.
-          Each element (i, j) in the matrix indicates the consistency between rule i and rule j based on their consequents.
-          The values range from 0 to 1, where 0 indicates large difference (low consistency) and 1 indicates little
-          or no difference (high consistency). The diagonal elements are set to 1, representing maximum consistency
-          with oneself.
+            - consistency_matrix (numpy.ndarray): A square matrix representing the consistency between fuzzy rules.
+              Each element (i, j) in the matrix indicates the consistency between rule i and rule j based on their consequents.
+              The values range from 0 to 1, where 0 indicates large difference (low consistency) and 1 indicates little
+              or no difference (high consistency). The diagonal elements are set to 1, representing maximum consistency
+              with oneself.
     """
 
     num_rules = len(V)
@@ -111,16 +128,16 @@ def calculate_distinguishability_matrix(rules):
         Calculates a distinguishability matrix for a set of fuzzy rules based on their Gaussian membership functions.
 
         Parameters:
-        - rules (list of dicts): List containing information about each fuzzy rule. Each dictionary should have keys
-          "centers" and "sigmas", where "centers" is an array representing the means of Gaussian membership functions,
-          and "sigmas" is an array representing the standard deviations of Gaussian membership functions.
+            - rules (list of dicts): List containing information about each fuzzy rule. Each dictionary should have keys
+              "centers" and "sigmas", where "centers" is an array representing the means of Gaussian membership functions,
+              and "sigmas" is an array representing the standard deviations of Gaussian membership functions.
 
         Returns:
-        - distinguishability_matrix (numpy.ndarray): A square matrix representing the distinguishability between fuzzy rules.
-          Each element (i, j) in the matrix indicates the distinguishability between rule i and rule j based on their
-          Gaussian membership functions. The values range from 0 to 1, where 0 indicates no distinguishability (complete overlap),
-          and 1 indicates maximum distinguishability (no overlap). The diagonal elements are set to 1, representing
-          maximum distinguishability with oneself.
+            - distinguishability_matrix (numpy.ndarray): A square matrix representing the distinguishability between fuzzy rules.
+              Each element (i, j) in the matrix indicates the distinguishability between rule i and rule j based on their
+              Gaussian membership functions. The values range from 0 to 1, where 0 indicates no distinguishability (complete overlap),
+              and 1 indicates maximum distinguishability (no overlap). The diagonal elements are set to 1, representing
+              maximum distinguishability with oneself.
     """
 
     num_rules = len(rules)
@@ -155,16 +172,16 @@ def calculate_ecompleteness_and_get_uncovered_samples(all_activations, epsilon):
         Calculates the completeness score and identifies uncovered samples based on activation thresholds.
 
         Parameters:
-        - all_activations (numpy.ndarray): Matrix of rule activations for each sample, where each row represents a sample
-          and each column represents a rule.
-        - epsilon (float): Activation threshold for determining whether a rule has been activated for a sample.
+            - all_activations (numpy.ndarray): Matrix of rule activations for each sample, where each row represents a sample
+              and each column represents a rule.
+            - epsilon (float): Activation threshold for determining whether a rule has been activated for a sample.
 
         Returns:
-        - completeness_score (float): The percentage of samples for which at least one rule was activated above the threshold.
-          It represents how well the fuzzy rules cover the samples.
-        - uncovered_samples_indices (numpy.ndarray): Indices of uncovered samples, i.e., samples for which no rules were
-          activated above the threshold. It helps in identifying samples that may need further attention or refinement
-          in the fuzzy rule system.
+            - completeness_score (float): The percentage of samples for which at least one rule was activated above the threshold.
+              It represents how well the fuzzy rules cover the samples.
+            - uncovered_samples_indices (numpy.ndarray): Indices of uncovered samples, i.e., samples for which no rules were
+              activated above the threshold. It helps in identifying samples that may need further attention or refinement
+              in the fuzzy rule system.
     """
 
     # Apply the epsilon activation threshold to determine whether a rule has been activated for each sample
@@ -184,16 +201,16 @@ def calculate_similarity_matrix(rules):
         Calculates a similarity matrix for a set of fuzzy rules based on their parameters.
 
         Parameters:
-        - rules (list of dicts): List containing information about each fuzzy rule. Each dictionary should have keys
-          "centers" and "sigmas", where "centers" is an array representing the means of Gaussian membership functions,
-          and "sigmas" is an array representing the standard deviations of Gaussian membership functions.
+            - rules (list of dicts): List containing information about each fuzzy rule. Each dictionary should have keys
+              "centers" and "sigmas", where "centers" is an array representing the means of Gaussian membership functions,
+              and "sigmas" is an array representing the standard deviations of Gaussian membership functions.
 
         Returns:
-        - similarity_matrix (numpy.ndarray): A square matrix representing the similarity between fuzzy rules.
-          Each element (i, j) in the matrix indicates the similarity between rule i and rule j based on their
-          parameters (mean and standard deviation). The values range from 0 to 1, where 0 indicates no similarity
-          (maximum distance), and 1 indicates maximum similarity (identical parameters). The diagonal elements are set
-          to 1, representing maximum similarity with oneself.
+            - similarity_matrix (numpy.ndarray): A square matrix representing the similarity between fuzzy rules.
+              Each element (i, j) in the matrix indicates the similarity between rule i and rule j based on their
+              parameters (mean and standard deviation). The values range from 0 to 1, where 0 indicates no similarity
+              (maximum distance), and 1 indicates maximum similarity (identical parameters). The diagonal elements are set
+              to 1, representing maximum similarity with oneself.
     """
     num_rules = len(rules)
     similarity_matrix = np.zeros((num_rules, num_rules))

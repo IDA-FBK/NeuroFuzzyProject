@@ -16,17 +16,17 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     Get data of the required dataset
 
     Parameters:
-    - dataset (str): Name of the dataset.
-    - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
-      is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
-    - seed (int): Seed for random number generation (used only for synthetic exp).
-    - test_size (float): Proportion of the dataset to include in the test split.
+        - dataset (str): Name of the dataset.
+        - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
+          is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
+        - seed (int): Seed for random number generation (used only for synthetic exp).
+        - test_size (float): Proportion of the dataset to include in the test split.
 
     Returns:
-    - data_train (tuple): Tuple containing features and labels for the training set.
-    - data_test (tuple): Tuple containing features and labels for the testing set.
-    - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
-      to their original dataset class values.
+        - data_train (tuple): Tuple containing features and labels for the training set.
+        - data_test (tuple): Tuple containing features and labels for the testing set.
+        - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
+          to their original dataset class values.
     """
 
     map_class_dict = {}
@@ -45,6 +45,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         elif data_encoding == "no-encoding":
             # Convert to binary classification problem
             y[y == 0] = -1
+            map_class_dict[-1] = 0
             y[y > 0] = 1
             y.reshape(-1, 1)
 
@@ -82,7 +83,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 2
             y = y.reshape(-1, 1)
 
-    elif dataset == "mammographic":
+    elif dataset == "mammography":
         # Assuming the diabetes dataset is stored in 'data/mammographic_masses.txt'
         file_path = "data/datasets/mammographic_masses.txt"
 
