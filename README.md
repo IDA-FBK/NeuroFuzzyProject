@@ -20,13 +20,13 @@ A novel interpretable and adaptable neuro-symbolic framework that integrates Fuz
 - First, ensure you have Conda installed. If not, follow the instructions [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 - Then, create the project environment using the provided fuzzyltn_env.yml file:
   ```bash
-  conda env create -f fuzzyltn_env.yml
+  conda env create -f environment.yml
   ```
 
 - And activate it:
 
   ```bash
-  conda activate fuzzyltn
+  conda activate neurofuzzy
   ```
 
 ### 2. Set up Configuration
