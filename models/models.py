@@ -22,6 +22,7 @@ class FNNModel:
         self,
         num_mfs,
         neuron_type="andneuron",
+        interpretation="prod-probsum",
         activation="linear",
         optimizer="moore-penrose",
         visualizeMF=False,
@@ -33,6 +34,8 @@ class FNNModel:
         Parameters:
             - num_mfs (int): Number of membership functions for each input dimension.
             - neuron_type (str): Type of neuron to use in the FNN model. Default is "andneuron".
+            - fuzzy_interpretation: String denoting the fuzzy interpretation to apply when computing the output of the
+              logical neurons (i.e., AND and OR). Default is "prod-probsum"
             - activation (str): Activation function to use in the FNN model. Default is "linear".
             - optimizer (str): Optimizer algorithm to use for training the FNN model. Default is "moore-penrose".
             - visualizeMF (bool): Whether to visualize membership functions during training. Default is False.
@@ -45,6 +48,7 @@ class FNNModel:
         self.model = None
         self.num_mfs = num_mfs
         self.neuron_type = neuron_type
+        self.intepretation = interpretation
         self.activation = activation
         self.optimizer = optimizer
         self.visualizeMF = visualizeMF
@@ -181,11 +185,11 @@ class FNNModel:
 
                 if self.neuron_type == "andneuron":
                     z[sample_index, neuron_index] = andneuron(
-                        logic_neuron_input, weights
+                        logic_neuron_input, weights, self.intepretation
                     )
                 elif self.neuron_type == "orneuron":
                     z[sample_index, neuron_index] = orneuron(
-                        logic_neuron_input, weights
+                        logic_neuron_input, weights, self.intepretation
                     )
 
         logic_outputs = z
@@ -283,7 +287,7 @@ class FNNModel:
                 y_test[y_test == -1] = map_class_dict[-1]
                 y_pred[y_pred == -1] = map_class_dict[-1]
 
-            elif data_encoding=="one-hot-encoding" and pred_method=="argmax":
+            elif data_encoding == "one-hot-encoding" and pred_method == "argmax":
                 y_pred = np.argmax(output_v, 1)
                 y_test = np.argmax(y_test, 1)
                 if map_class_dict:
