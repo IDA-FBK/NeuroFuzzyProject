@@ -384,12 +384,7 @@ class FNNModel:
                 if feature_index < len(mf_combination) - 1:
                     rule += "AND " if self.neuron_type == "andneuron" else "OR "
 
-            # Adds the rule's result (output)
-            v_max = self.V[neuron_index]
-            if len(v_max) >= 2:
-                v_max = np.max(v_max)
-
-            rule += f"THEN output is {v_max}"
+            rule += f"THEN output is {np.round(self.V[neuron_index], 2)}"
 
             # Adds the complete rule to the list of rules
             rules.append(rule)
@@ -511,10 +506,6 @@ class FNNModel:
             conjunction = " AND " if self.neuron_type == "andneuron" else " OR "
             rule_body = conjunction.join(rule_parts)
 
-            v_max = v[0]
-            if len(v) >= 2:
-                v_max = np.max(v)
-
             # Format complete axiom with output rounded to two decimal places
-            axiom = f"IF {rule_body}, THEN output is [{round(v_max, 2)}]."
+            axiom = f"IF {rule_body}, THEN output is [{np.round(v, 2)}]."
             self.axioms.append(axiom)
