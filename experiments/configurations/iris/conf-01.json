@@ -1,8 +1,8 @@
 {
   "num_seeds": 10,
   "neuron_types": [
-    "andneuron",
-    "orneuron"
+    "andneuron_prod-probsum",
+    "orneuron_probsum-prod"
   ],
   "num_mfs_options": [
     2,

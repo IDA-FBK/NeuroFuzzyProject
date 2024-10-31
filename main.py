@@ -52,7 +52,9 @@ def run_experiment(
     None
     """
 
-    exp_str = f"/exp-seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_activation_{activation}/"
+    current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
+
+    exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
     path_to_exp_results = path_to_results + exp_str
 
     if not os.path.exists(path_to_exp_results):
@@ -61,10 +63,12 @@ def run_experiment(
     x_train, y_train = train_data[0], train_data[1]
     x_test, y_test = test_data[0], test_data[1]
 
+
     print(f"\n---\nModel: {neuron_type} with {num_mfs} MFs")
     fnn_model = FNNModel(
         num_mfs=num_mfs,
-        neuron_type=neuron_type,
+        neuron_type=current_neuron_type,
+        interpretation=fuzzy_interpretation,
         activation=activation,
         optimizer=optimizer,
         visualizeMF=False,
@@ -143,7 +147,7 @@ if __name__ == "__main__":
 
     # experiment setting
     num_seeds = conf["num_seeds"]
-    neuron_types = conf["neuron_types"]
+    neuron_types= conf["neuron_types"]
     num_mfs_options = conf["num_mfs_options"]
     activation = conf["activation"]
     optimizer = conf["optimizer"]

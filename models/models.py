@@ -22,6 +22,7 @@ class FNNModel:
         self,
         num_mfs,
         neuron_type="andneuron",
+        interpretation="prod-probsum",
         activation="linear",
         optimizer="moore-penrose",
         visualizeMF=False,
@@ -33,6 +34,8 @@ class FNNModel:
         Parameters:
             - num_mfs (int): Number of membership functions for each input dimension.
             - neuron_type (str): Type of neuron to use in the FNN model. Default is "andneuron".
+            - fuzzy_interpretation: String denoting the fuzzy interpretation to apply when computing the output of the
+              logical neurons (i.e., AND and OR). Default is "prod-probsum"
             - activation (str): Activation function to use in the FNN model. Default is "linear".
             - optimizer (str): Optimizer algorithm to use for training the FNN model. Default is "moore-penrose".
             - visualizeMF (bool): Whether to visualize membership functions during training. Default is False.
@@ -45,6 +48,7 @@ class FNNModel:
         self.model = None
         self.num_mfs = num_mfs
         self.neuron_type = neuron_type
+        self.intepretation = interpretation
         self.activation = activation
         self.optimizer = optimizer
         self.visualizeMF = visualizeMF
@@ -181,11 +185,11 @@ class FNNModel:
 
                 if self.neuron_type == "andneuron":
                     z[sample_index, neuron_index] = andneuron(
-                        logic_neuron_input, weights
+                        logic_neuron_input, weights, self.intepretation
                     )
                 elif self.neuron_type == "orneuron":
                     z[sample_index, neuron_index] = orneuron(
-                        logic_neuron_input, weights
+                        logic_neuron_input, weights, self.intepretation
                     )
 
         logic_outputs = z
@@ -283,7 +287,7 @@ class FNNModel:
                 y_test[y_test == -1] = map_class_dict[-1]
                 y_pred[y_pred == -1] = map_class_dict[-1]
 
-            elif data_encoding=="one-hot-encoding" and pred_method=="argmax":
+            elif data_encoding == "one-hot-encoding" and pred_method == "argmax":
                 y_pred = np.argmax(output_v, 1)
                 y_test = np.argmax(y_test, 1)
                 if map_class_dict:
@@ -380,12 +384,7 @@ class FNNModel:
                 if feature_index < len(mf_combination) - 1:
                     rule += "AND " if self.neuron_type == "andneuron" else "OR "
 
-            # Adds the rule's result (output)
-            v_max = self.V[neuron_index]
-            if len(v_max) >= 2:
-                v_max = np.max(v_max)
-
-            rule += f"THEN output is {v_max}"
+            rule += f"THEN output is {np.round(self.V[neuron_index], 2)}"
 
             # Adds the complete rule to the list of rules
             rules.append(rule)
@@ -507,10 +506,6 @@ class FNNModel:
             conjunction = " AND " if self.neuron_type == "andneuron" else " OR "
             rule_body = conjunction.join(rule_parts)
 
-            v_max = v[0]
-            if len(v) >= 2:
-                v_max = np.max(v)
-
             # Format complete axiom with output rounded to two decimal places
-            axiom = f"IF {rule_body}, THEN output is [{round(v_max, 2)}]."
+            axiom = f"IF {rule_body}, THEN output is [{np.round(v, 2)}]."
             self.axioms.append(axiom)
