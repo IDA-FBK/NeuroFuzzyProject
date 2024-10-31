@@ -26,12 +26,12 @@ def calculate_avg_results(results_df, path_to_results):
 
     # Rename columns for clarity
     agg_grouped_results.columns = [
-        "Train Acc. Mean", "Train Ac.y Std",
+        "Train Acc. Mean", "Train Acc. Std",
         "Train F1 Mean", "Train F1 Std",
         "Train Rec. Mean", "Train Rec. Std",
         "Train Prec. Mean", "Train Prec. Std",
         "Train Spec. Mean", "Train Spec. Std",
-        "Test Accu.", "Test Acc. Std",
+        "Test Acc.", "Test Acc. Std",
         "Test F1", "Test F1 Std",
         "Test Rec.", "Test Rec. Std",
         "Test Prec.", "Test Prec. Std",
