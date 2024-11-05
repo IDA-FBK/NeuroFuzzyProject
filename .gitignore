@@ -162,5 +162,4 @@ cython_debug/
 #.idea/
 
 experiments/results/*
-experiments/configurations/__pycache__/*
 
