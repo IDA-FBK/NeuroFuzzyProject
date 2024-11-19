@@ -63,6 +63,32 @@ class FNNModel:
         self.total_fuzzy_neurons = None
         self.rules_dictionary = []  # Stores fuzzy rules
         self.axioms = []  # Stores axioms generated from fuzzy rules
+        
+        
+    def initialize_individual(self, x_train):
+        fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
+        logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
+        
+        #Random initialization of V
+        self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
+        
+
+    def calculate_fitness(self, fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict):
+        evaluation_metrics_train = self.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
+        return evaluation_metrics_train[fitness_type]
+    
+    def mutate(self, mutation_rate=0.1):
+        """
+        Mutate the individual (V) by adding random noise to the weights.
+
+        Parameters:
+            - mutation_rate (float): Mutation rate, which determines the amount of noise to add to the weights.
+
+        Returns:
+            None
+        """
+        self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
+        self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
 
     def fuzzification_layer(self, x):
         """
