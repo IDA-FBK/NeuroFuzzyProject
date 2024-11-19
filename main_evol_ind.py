@@ -74,11 +74,31 @@ def run_experiment(
         visualizeMF=False,
         rng_seed=rng_seed,
     )
+
+    fnn_model.initialize_individual(x_train) #this call fuzzification_layer for initialize the individual
     
-    print("\nSummary of Performance Metrics:")
-    fnn_model.train_model(x_train, y_train)
-    evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
-    evaluation_metrics_test = fnn_model.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
+    fitness_type = 'accuracy'
+    fitness = fnn_model.calculate_fitness(fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict)
+    # print("\nSummary of Performance Metrics:")
+    #fnn_model.train_model(x_train, y_train)
+    # evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
+    # evaluation_metrics_test = fnn_model.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
+    print('fitness: ', fitness)
+    
+    print("V ", fnn_model.V)
+    print("neuron_weights: ", fnn_model.neuron_weights)
+    
+
+    # mutation
+    mutation_rate = 0.1
+    fnn_model.mutate(mutation_rate)
+    print("\nV, after mutation: ", fnn_model.V)
+    print("neuron_weights, after mutation: ", fnn_model.neuron_weights)
+    
+    mutation_rate = 0.9
+    fnn_model.mutate(mutation_rate)
+    print("\nV, after mutation 2: ", fnn_model.V)
+    print("neuron_weights, after 2 mutation: ", fnn_model.neuron_weights)
 
     rules = fnn_model.generate_fuzzy_rules()
 
@@ -91,7 +111,7 @@ def run_experiment(
     # TODO: These axioms were related to the integration with LTN Framework (To me we can remove it)
     # save_list_in_a_file(fnn_model.axioms, path_to_exp_results + "fuzzy_axiom.txt")
 
-    # Plot confusion matrix of class prediction
+    """ # Plot confusion matrix of class prediction
     plot_class_confusion_matrix("TRAIN", evaluation_metrics_train["cm"], evaluation_metrics_train["unique_labels"],
                                 path_to_exp_results)
     plot_class_confusion_matrix("TEST", evaluation_metrics_test["cm"], evaluation_metrics_test["unique_labels"],
@@ -113,7 +133,7 @@ def run_experiment(
         evaluation_metrics_test["recall"],  # Testing Recall
         evaluation_metrics_test["precision"],  # Testing Precision
         evaluation_metrics_test["specificity"],  # Testing Specificity
-    ]
+    ] """
 
     # TODO: evaluate interpretabilty is in stand-by
     #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
@@ -163,8 +183,26 @@ if __name__ == "__main__":
             "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec.",
         ]
     )
+    i_seed = 5 #np.random.default_rng(num_seeds)
+    rng_seed = np.random.default_rng(i_seed)
+    run_experiment(
+                    data_train,
+                    data_test,
+                    data_encoding,
+                    pred_method,
+                    map_class_dict,
+                    "andneuron_prod-probsum",
+                    2,
+                    activation,
+                    optimizer,
+                    i_seed,
+                    rng_seed,
+                    results_df,
+                    path_to_results
+                )
+    
 
-    for i_seed in range(num_seeds):
+    """ for i_seed in range(num_seeds):
         # run_rng
         rng_seed = np.random.default_rng(i_seed)
         for neuron_type in neuron_types:
@@ -183,7 +221,7 @@ if __name__ == "__main__":
                     rng_seed,
                     results_df,
                     path_to_results
-                )
+                ) """
 
     # save results
     results_df.to_csv(path_to_results + "runs_results.csv")
