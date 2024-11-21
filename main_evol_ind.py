@@ -88,13 +88,22 @@ def run_experiment(
     print("V ", fnn_model.V)
     print("neuron_weights: ", fnn_model.neuron_weights)
     
+    print("gaussians: ")
+    for feature_index in range(len(fnn_model.mf_params)):
+        for mf_index in range(fnn_model.num_mfs):
+            print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
+
 
     # mutation
     mutation_rate = 0.1
     fnn_model.mutate(mutation_rate)
     print("\nV, after mutation: ", fnn_model.V)
     print("neuron_weights, after mutation: ", fnn_model.neuron_weights)
-    
+    print("gaussians, after mutations: ")
+    for feature_index in range(len(fnn_model.mf_params)):
+        for mf_index in range(fnn_model.num_mfs):
+            print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
+
     mutation_rate = 0.9
     fnn_model.mutate(mutation_rate)
     print("\nV, after mutation 2: ", fnn_model.V)
