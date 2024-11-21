@@ -2,7 +2,7 @@ import random
 from models.crossover import *
 
 
-def selection(population, selection_mu, selection_lambda, mutation_rate, selection_strategy):
+def selection(population, selection_mu, selection_lambda, mutation_rate, selection_strategy="comma"):
     """
     Select the best individuals from the population, eventually with mutation.
     population: list of Individual
@@ -16,6 +16,8 @@ def selection(population, selection_mu, selection_lambda, mutation_rate, selecti
     # Select the best individuals
     if selection_strategy == "plus":
         offspring += population
+    elif selection_strategy != "comma":
+        raise ValueError("Invalid selection strategy")
     offspring.sort(key=lambda x: x.fitness, reverse=True)
     return offspring[:selection_mu]
 
@@ -39,6 +41,6 @@ def generate_offspring(parents, selection_lambda, mutation_rate):
         # Crossover
         child = crossover(parent1, parent2)
         # Mutation
-        child = child.mutate(mutation_rate=mutation_rate)
+        child.mutate(mutation_rate=mutation_rate)
         offspring.append(child)
     return offspring
