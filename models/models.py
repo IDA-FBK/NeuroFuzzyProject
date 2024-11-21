@@ -27,6 +27,7 @@ class FNNModel:
         optimizer="moore-penrose",
         visualizeMF=False,
         rng_seed=None,
+        fitness=None,
     ):
         """
         Initialize a Fuzzy Neural Network (FNN) model with the specified configuration.
@@ -75,6 +76,7 @@ class FNNModel:
 
     def calculate_fitness(self, fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict):
         evaluation_metrics_train = self.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
+        self.fitness = evaluation_metrics_train[fitness_type]
         return evaluation_metrics_train[fitness_type]
     
     def mutate(self, mutation_rate=0.1):
