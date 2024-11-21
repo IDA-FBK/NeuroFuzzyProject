@@ -11,13 +11,16 @@ def crossover(parent1, parent2, crossover_rate=0.1):
     crossover_rate: float, probability of swapping each parameter
     """
     child = parent1.copy()
+
     # Swap neuron weights
     for i in range(len(child.neuron_weights)):
         if random.random() < crossover_rate:
             child.neuron_weights[i] = parent2.neuron_weights[i]
+
     # Swap last layer weights
     if random.random() < crossover_rate:
         child.V = parent2.V
+        
     # Swap gaussian parameters
     for feature_index in range(len(child.mf_params)):
         if SWAP4ALL_MFS:
