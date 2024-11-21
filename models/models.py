@@ -89,6 +89,13 @@ class FNNModel:
         """
         self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
         self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
+        
+        #The gaussian part
+        for feature_index in range(len(self.mf_params)):
+            for mf_index in range(self.num_mfs):
+                self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+        
 
     def fuzzification_layer(self, x):
         """
