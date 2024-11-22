@@ -96,6 +96,13 @@ def run_experiment(
     #Early stopping da implementare
     #Mutation rate decrease?
     #In caso: weights and biases
+    
+    #Variazioni di individui solo tra AND e solo tra OR. No mix tra tipi di neuroni. (Almeno per il momento, poi faccio interagire i tipi diversi di neruoni e numero diverso di membership functions)
+    #Rimetto il for basato sul .json, e faccio i test con le varie configurazioni separatamente.
+
+    #Confronto con la versione precedente del codice.
+
+    #In caso fase esplorativa: leggo il paper e ne cerco altri.
 
     # mutation
     mutation_rate = 0.1
