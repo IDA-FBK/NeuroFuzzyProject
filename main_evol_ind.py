@@ -93,6 +93,9 @@ def run_experiment(
         for mf_index in range(fnn_model.num_mfs):
             print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
 
+    #Early stopping da implementare
+    #Mutation rate decrease?
+    #In caso: weights and biases
 
     # mutation
     mutation_rate = 0.1
@@ -103,6 +106,7 @@ def run_experiment(
     for feature_index in range(len(fnn_model.mf_params)):
         for mf_index in range(fnn_model.num_mfs):
             print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
+
 
     mutation_rate = 0.9
     fnn_model.mutate(mutation_rate)

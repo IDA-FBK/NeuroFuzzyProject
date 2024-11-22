@@ -71,9 +71,15 @@ class FNNModel:
         
         #Random initialization of V
         self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
-        
+        #"Pesi" di ciascuna membership functions, per eseguire il miglior matching sugli esempi
+
 
     def calculate_fitness(self, fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict):
+        #Parametrizzata nel file di configurazione
+        #Per regresssione (MSE), classificazione... (nel evaluate_model)
+        #Da modificare nel self.evaluate_model
+        
+        #Salvare il valore in un campo classe?
         evaluation_metrics_train = self.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
         return evaluation_metrics_train[fitness_type]
     
@@ -95,7 +101,6 @@ class FNNModel:
             for mf_index in range(self.num_mfs):
                 self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
                 self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-        
 
     def fuzzification_layer(self, x):
         """
