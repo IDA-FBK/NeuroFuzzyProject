@@ -18,6 +18,8 @@ def run_experiment(
     test_data,
     data_encoding,
     pred_method,
+    fitness_function,
+    mutation_rate,
     map_class_dict,
     neuron_type,
     num_mfs,
@@ -77,8 +79,8 @@ def run_experiment(
 
     fnn_model.initialize_individual(x_train) #this call fuzzification_layer for initialize the individual
     
-    fitness_type = 'accuracy'
-    fitness = fnn_model.calculate_fitness(fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict)
+    #fitness_type = 'accuracy'
+    fitness = fnn_model.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict)
     # print("\nSummary of Performance Metrics:")
     #fnn_model.train_model(x_train, y_train)
     # evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
@@ -105,7 +107,7 @@ def run_experiment(
     #In caso fase esplorativa: leggo il paper e ne cerco altri.
 
     # mutation
-    mutation_rate = 0.1
+    #mutation_rate = 0.1
     fnn_model.mutate(mutation_rate)
     print("\nV, after mutation: ", fnn_model.V)
     print("neuron_weights, after mutation: ", fnn_model.neuron_weights)
@@ -115,7 +117,7 @@ def run_experiment(
             print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
 
 
-    mutation_rate = 0.9
+    #mutation_rate = 0.9
     fnn_model.mutate(mutation_rate)
     print("\nV, after mutation 2: ", fnn_model.V)
     print("neuron_weights, after 2 mutation: ", fnn_model.neuron_weights)
@@ -193,6 +195,8 @@ if __name__ == "__main__":
     optimizer = conf["optimizer"]
     data_encoding = conf["data_encoding"]
     pred_method = conf["pred_method"]
+    fitness_function = conf["fitness_function"]
+    mutation_rate = conf["mutation_rate"]
 
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
 
@@ -210,6 +214,8 @@ if __name__ == "__main__":
                     data_test,
                     data_encoding,
                     pred_method,
+                    fitness_function,
+                    mutation_rate,
                     map_class_dict,
                     "andneuron_prod-probsum",
                     2,
