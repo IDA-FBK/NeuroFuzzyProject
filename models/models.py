@@ -26,8 +26,8 @@ class FNNModel:
         activation="linear",
         optimizer="moore-penrose",
         visualizeMF=False,
-        rng_seed=None,
-        fitness=None,
+        mutation_ind_rate = 0.5,
+        rng_seed=None
     ):
         """
         Initialize a Fuzzy Neural Network (FNN) model with the specified configuration.
@@ -64,7 +64,8 @@ class FNNModel:
         self.total_fuzzy_neurons = None
         self.rules_dictionary = []  # Stores fuzzy rules
         self.axioms = []  # Stores axioms generated from fuzzy rules
-        
+        self.fitness = None
+        self.mutation_ind_rate = mutation_ind_rate #probability for the individual to mutate 
         
     def initialize_individual(self, x_train):
         fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
@@ -72,11 +73,20 @@ class FNNModel:
         
         #Random initialization of V
         self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
-        
+        #"Pesi" di ciascuna membership functions, per eseguire il miglior matching sugli esempi
 
-    def calculate_fitness(self, fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict):
-        evaluation_metrics_train = self.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
-        self.fitness = evaluation_metrics_train[fitness_type]
+
+    def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
+        #Parametrizzata nel file di configurazione
+        #Per regresssione (MSE), classificazione... (nel evaluate_model)
+        #Da modificare nel self.evaluate_model
+        
+        #Salvare il valore in un campo classe?
+        evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
+        
+        if update_fitness: #Onlt done on the train set
+            self.fitness = evaluation_metrics_train[fitness_type]
+        
         return evaluation_metrics_train[fitness_type]
     
     def mutate(self, mutation_rate=0.1):
@@ -89,15 +99,18 @@ class FNNModel:
         Returns:
             None
         """
-        self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
-        self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
-        
-        #The gaussian part
-        for feature_index in range(len(self.mf_params)):
-            for mf_index in range(self.num_mfs):
-                self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-                self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-        
+        if np.random.rand() < self.mutation_ind_rate:
+            self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
+            self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
+            
+            #The gaussian part
+            for feature_index in range(len(self.mf_params)):
+                for mf_index in range(self.num_mfs):
+                    self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                    self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                    if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
+                        self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
+
         # Reset fitness
         self.fitness = None
         
@@ -154,6 +167,8 @@ class FNNModel:
                 fuzzy_outputs[:, feature_index * self.num_mfs + mf_index] = (
                     gaussian_output
                 )
+                if 'nan' in fuzzy_outputs or np.isnan(fuzzy_outputs).any():
+                    print("Nan in fuzzy output")
 
         self.rules_dictionary = self.generate_rules_dictionary()
         return fuzzy_outputs  # Return the fuzzy outputs
@@ -366,7 +381,7 @@ class FNNModel:
                 specificity = np.mean(specificities)  # Average specificity for multi-class
 
             accuracy = accuracy_score(y_test, y_pred)
-            precision = precision_score(y_test, y_pred, average=average_metrics)
+            precision = precision_score(y_test, y_pred, average=average_metrics, zero_division=0)
             recall = recall_score(y_test, y_pred, average=average_metrics)
             f1 = f1_score(y_test, y_pred, average=average_metrics)
 
@@ -379,15 +394,15 @@ class FNNModel:
             evaluation_metrics["unique_labels"] = np.unique(y_test)
 
             # Prints the metrics
-            print(f"\nAccuracy: {accuracy * 100:.2f}%")
+            """ print(f"\nAccuracy: {accuracy * 100:.2f}%")
             print(f"Specificity: {specificity}")
             print(f"Precision: {precision}")
             print(f"Recall: {recall}")
-            print(f"F-Score: {f1}")
+            print(f"F-Score: {f1}") """
 
         else:
             scores = self.model.evaluate(logic_outputs_test, y_test)
-            print(f"\nAccuracy: {scores[1] * 100:.2f}%")
+            #print(f"\nAccuracy: {scores[1] * 100:.2f}%")
 
             evaluation_metrics["accuracy"] = scores[1]
 
