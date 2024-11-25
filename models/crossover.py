@@ -1,4 +1,5 @@
 import random
+import copy 
 
 SWAP4ALL_MFS = True # If True, swap all gaussian parameters of a feature, for all its membership functions.
 
@@ -10,7 +11,7 @@ def crossover(parent1, parent2, crossover_rate=0.1):
     The parameters we consider are parent.neuron_weights, parent.V and gaussian parameters (parent.mf_params).
     crossover_rate: float, probability of swapping each parameter
     """
-    child = parent1.copy()
+    child = copy_individual(parent1)
 
     # Swap neuron weights
     for i in range(len(child.neuron_weights)):
@@ -33,3 +34,11 @@ def crossover(parent1, parent2, crossover_rate=0.1):
                     child.mf_params[feature_index]["sigmas"][mf_index] = parent2.mf_params[feature_index]["sigmas"][mf_index]
     return child
 
+
+def copy_individual(individual):
+    """
+    Create a deep copy of an individual.
+    """
+    new_individual = copy.deepcopy(individual)
+    new_individual.fitness = None
+    return new_individual
