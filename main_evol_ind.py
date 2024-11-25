@@ -3,6 +3,7 @@ import os.path
 
 import numpy as np
 import pandas as pd
+#from tqdm import tqdm
 
 from data.data import get_data
 from experiments.configurations.configurations import get_configuration
@@ -11,13 +12,37 @@ from experiments.calculate import calculate_avg_results
 from experiments.utils import save_list_in_a_file
 from experiments.plots import plot_class_confusion_matrix
 from models.models import FNNModel
+from models.selection import selection
 
+
+def initialize_population(pop_size, num_mfs, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed):
+    population = []
+    
+    for _ in range(pop_size):
+        individuo = FNNModel(num_mfs=num_mfs, neuron_type=neuron_type, interpretation=fuzzy_interpretation, activation=activation, optimizer=optimizer, visualizeMF=False, mutation_ind_rate=mutation_ind_rate, rng_seed=rng_seed)
+        individuo.initialize_individual(x_train)
+        population.append(individuo)
+        
+    return population
+
+
+def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.model_selection.train_test_split; ma dobbiamo aggiungere la libreria
+    x_data, y_data = data[0], data[1]
+    
+    indice_split = int(percentage_train*len(x_data))
+    
+    x_train, x_eval = x_data[:indice_split], x_data[indice_split:]
+    y_train, y_eval = y_data[:indice_split], y_data[indice_split:]    
+    
+    return (x_train, y_train), (x_eval, y_eval)
 
 def run_experiment(
     train_data,
     test_data,
     data_encoding,
     pred_method,
+    fitness_function,
+    mutation_rate,
     map_class_dict,
     neuron_type,
     num_mfs,
@@ -60,92 +85,61 @@ def run_experiment(
     if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True)
 
-    x_train, y_train = train_data[0], train_data[1]
+    #x_train, y_train = train_data[0], train_data[1]
     x_test, y_test = test_data[0], test_data[1]
 
+    #Population
+    max_generations = 50
+    mutation_individual_rate = 0.5 #Probabilità di mutazione di un individuo
+    #mutation_rate = 0.1 #Probabilità di mutazione di un gene
 
-    print(f"\n---\nModel: {neuron_type} with {num_mfs} MFs")
-    fnn_model = FNNModel(
-        num_mfs=num_mfs,
-        neuron_type=current_neuron_type,
-        interpretation=fuzzy_interpretation,
-        activation=activation,
-        optimizer=optimizer,
-        visualizeMF=False,
-        rng_seed=rng_seed,
-    )
-
-    fnn_model.initialize_individual(x_train) #this call fuzzification_layer for initialize the individual
+    mu = 10 # = pop_size
+    lambda_ = 20 #Numero di figli generati ad ogni iterazione (da cui si prendono #mu individui per la successiva generazione)
+    selection_strategy = "plus" #otherwise "comma"
+    mutation_ind_rate = 0.5 #Probabilità di mutazione di un individuo
     
-    fitness_type = 'accuracy'
-    fitness = fnn_model.calculate_fitness(fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict)
-    # print("\nSummary of Performance Metrics:")
-    #fnn_model.train_model(x_train, y_train)
-    # evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
-    # evaluation_metrics_test = fnn_model.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
-    print('fitness: ', fitness)
+    (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
     
-    print("V ", fnn_model.V)
-    print("neuron_weights: ", fnn_model.neuron_weights)
     
-    print("gaussians: ")
-    for feature_index in range(len(fnn_model.mf_params)):
-        for mf_index in range(fnn_model.num_mfs):
-            print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
+    population = initialize_population(mu, num_mfs, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
+    
+    generation = 0
+    best_fitness = 0
+    best_guy = None
+    max_patience = 20
+    patience = max_patience
+    
+    #pbar = tqdm(range(1,max_generations))
 
+    for generation in range(max_generations):
+        if patience == 0:
+            break
+        
+        population = selection(population, mu, lambda_, mutation_rate,
+                                        fitness_function, x_train, y_train, data_encoding, pred_method,
+                                        map_class_dict, selection_strategy)
+        
+        
+        #Evaluate individual on the validation set (only the best one)
+        fitness_eval = population[0].calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+        
+        if fitness_eval > best_fitness:
+            best_fitness = fitness_eval
+            best_guy = population[0]
+            patience = max_patience
+        else: 
+            patience -= 1
 
-    # mutation
-    mutation_rate = 0.1
-    fnn_model.mutate(mutation_rate)
-    print("\nV, after mutation: ", fnn_model.V)
-    print("neuron_weights, after mutation: ", fnn_model.neuron_weights)
-    print("gaussians, after mutations: ")
-    for feature_index in range(len(fnn_model.mf_params)):
-        for mf_index in range(fnn_model.num_mfs):
-            print(fnn_model.mf_params[feature_index]["centers"][mf_index], fnn_model.mf_params[feature_index]["sigmas"][mf_index])
+        generation += 1
+        
+        print("best individuo (train): ", population[0].fitness)
+        print("best individuo (eval): ", fitness_eval)
+        print("best individuo (test): ", population[0].calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
+        print("patient: ", patience)
 
-    mutation_rate = 0.9
-    fnn_model.mutate(mutation_rate)
-    print("\nV, after mutation 2: ", fnn_model.V)
-    print("neuron_weights, after 2 mutation: ", fnn_model.neuron_weights)
-
-    rules = fnn_model.generate_fuzzy_rules()
-
-    # Save fuzzy rules to a file
-    save_list_in_a_file(rules, path_to_exp_results + "fuzzy_rules.txt")
-
-    fnn_model.generate_fuzzy_axioms()
-
-    # Save axioms in a file
-    # TODO: These axioms were related to the integration with LTN Framework (To me we can remove it)
-    # save_list_in_a_file(fnn_model.axioms, path_to_exp_results + "fuzzy_axiom.txt")
-
-    """ # Plot confusion matrix of class prediction
-    plot_class_confusion_matrix("TRAIN", evaluation_metrics_train["cm"], evaluation_metrics_train["unique_labels"],
-                                path_to_exp_results)
-    plot_class_confusion_matrix("TEST", evaluation_metrics_test["cm"], evaluation_metrics_test["unique_labels"],
-                                path_to_exp_results)
-
-
-    # Append both train and test metrics to the DataFrame
-    results_df.loc[len(results_df)] = [
-        i_seed,
-        neuron_type,
-        num_mfs,
-        evaluation_metrics_train["accuracy"],  # Training accuracy
-        evaluation_metrics_train["fscore"],  # Training F-score
-        evaluation_metrics_train["recall"],  # Training Recall
-        evaluation_metrics_train["precision"],  # Training Precision
-        evaluation_metrics_train["specificity"],  # Training Specificity
-        evaluation_metrics_test["accuracy"],  # Testing accuracy
-        evaluation_metrics_test["fscore"],  # Testing F-score
-        evaluation_metrics_test["recall"],  # Testing Recall
-        evaluation_metrics_test["precision"],  # Testing Precision
-        evaluation_metrics_test["specificity"],  # Testing Specificity
-    ] """
-
-    # TODO: evaluate interpretabilty is in stand-by
-    #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
+    print("\n\nEvolution part done:")
+    print("Best individuo: ", best_guy.fitness)
+    print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
 
 
 if __name__ == "__main__":
@@ -182,6 +176,8 @@ if __name__ == "__main__":
     optimizer = conf["optimizer"]
     data_encoding = conf["data_encoding"]
     pred_method = conf["pred_method"]
+    fitness_function = conf["fitness_function"]
+    mutation_rate = conf["mutation_rate"]
 
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
 
@@ -199,6 +195,8 @@ if __name__ == "__main__":
                     data_test,
                     data_encoding,
                     pred_method,
+                    fitness_function,
+                    mutation_rate,
                     map_class_dict,
                     "andneuron_prod-probsum",
                     2,
@@ -236,6 +234,5 @@ if __name__ == "__main__":
     results_df.to_csv(path_to_results + "runs_results.csv")
     # compute mean and sd
     calculate_avg_results(results_df, path_to_results)
-
 
 
