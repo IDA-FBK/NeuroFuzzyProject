@@ -55,12 +55,15 @@ def generate_offspring(parents, selection_lambda, mutation_rate):
     selection_lambda: int, number of individuals to generate
     mutation_rate: float, probability of mutation
     """
+    # Possible alternative: Do tournament selection instead
+    
     # Compute the probability of selecting each parent
     fitness_sum = sum(p.fitness for p in parents)
     parent_probabilities = [p.fitness / fitness_sum for p in parents]
 
     offspring = []
     for _ in range(selection_lambda):
+        # Possible alternative: divide population in two subpopulations, and take one parents from each subpopulation
         parent1 = random.choices(parents, weights=parent_probabilities)[0]
         parent2 = random.choices(parents, weights=parent_probabilities)[0]
         child = crossover(parent1, parent2)

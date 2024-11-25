@@ -98,6 +98,9 @@ class FNNModel:
                 self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
                 self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
         
+        # Reset fitness
+        self.fitness = None
+        
 
     def fuzzification_layer(self, x):
         """
