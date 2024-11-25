@@ -8,8 +8,8 @@ def selection(
         selection_lambda,
         mutation_rate,
         fitness_type,
-        x_train,
-        y_train,
+        x,
+        y,
         data_encoding,
         pred_method,
         map_class_dict,
@@ -22,6 +22,7 @@ def selection(
     selection_lambda: int, number of individuals to generate
     mutation_rate: float, probability of mutation
     selection_strategy: str, either "plus" or "comma"
+    x, y: input-output data for fitness calculation
     """
     if selection_mu > selection_lambda:
         raise ValueError("selection_mu must be greater than selection_lambda")
@@ -31,14 +32,14 @@ def selection(
     # Calculate fitness of population
     for individual in population:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict)
+            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
 
     offspring = generate_offspring(population, selection_lambda, mutation_rate)
     
     # Calculate fitness of offspring
     for individual in offspring:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x_train, y_train, data_encoding, pred_method, map_class_dict)
+            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
 
     # Select the best individuals according to the selection strategy
     if selection_strategy == "plus":
