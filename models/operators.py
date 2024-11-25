@@ -78,6 +78,6 @@ def orneuron(fuzzy_output, weights, interpretation="probsum-prod"):
 
     if tconorm == "probsum":
         for v in tnorm_output:
-            orneuron_output += probabilist_sum_tconorm(orneuron_output, v)
+            orneuron_output = probabilist_sum_tconorm(orneuron_output, v)
 
     return orneuron_output
