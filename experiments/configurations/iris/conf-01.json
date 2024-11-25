@@ -12,5 +12,7 @@
   "activation": "linear",
   "optimizer": "moore-penrose",
   "data_encoding":"one-hot-encoding",
-  "pred_method": "argmax"
+  "pred_method": "argmax",
+  "fitness_function": "accuracy",
+  "mutation_rate": 0.1
 }
