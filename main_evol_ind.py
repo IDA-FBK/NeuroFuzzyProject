@@ -13,6 +13,7 @@ from experiments.utils import save_list_in_a_file
 from experiments.plots import plot_class_confusion_matrix
 from models.models import FNNModel
 from models.selection import selection
+import copy
 
 
 def initialize_population(pop_size, num_mfs, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed):
@@ -107,7 +108,7 @@ def run_experiment(
     best_guy = None
     max_patience = 20
     patience = max_patience
-    
+    epoch_improoved = False
     #pbar = tqdm(range(1,max_generations))
 
     for generation in range(max_generations):
@@ -118,28 +119,32 @@ def run_experiment(
                                         fitness_function, x_train, y_train, data_encoding, pred_method,
                                         map_class_dict, selection_strategy)
         
+        epoch_improoved = False
         
-        #Evaluate individual on the validation set (only the best one)
-        fitness_eval = population[0].calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+        for individuo in population:
+            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
         
-        if fitness_eval > best_fitness:
-            best_fitness = fitness_eval
-            best_guy = population[0]
-            patience = max_patience
-            # print("New best individuo: ", best_guy.fitness)
-        else: 
-            patience -= 1
-            # print("Best individuo: ", best_guy.fitness)
+            if fitness_eval > best_fitness: #Save the best individuo
+                best_fitness = fitness_eval
+                best_guy = copy.deepcopy(individuo)
+                epoch_improoved = True
 
+        if epoch_improoved:
+            patience = max_patience
+        else:
+            patience -= 1
+        
         generation += 1
         
-        print("best individuo (train): ", population[0].fitness)
-        print("best individuo (eval): ", fitness_eval)
-        print("best individuo (test): ", population[0].calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
+        
+        #Il best individuo è quello con la migliore performance sul validation set
+        print("best individuo (results on train set): ", best_guy.fitness)
+        print("best individuo (results on val set): ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
+        print("best individuo (results on test set): ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
         print("patient: ", patience)
-        # breakpoint()
+        
 
-    print("\n\nEvolution part done:")
+    print("\n\nEvolution part done:") #Il best individuo è quello con la migliore performance sul validation set
     print("Best individuo: ", best_guy.fitness)
     print("Best individuo eval set: ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
     print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
