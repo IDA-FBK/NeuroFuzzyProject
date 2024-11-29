@@ -108,6 +108,10 @@ class FNNModel:
                     if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
                         self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
 
+        # Reset fitness
+        self.fitness = None
+        
+
     def fuzzification_layer(self, x):
         """
         Performs the fuzzification layer operation for the input data.

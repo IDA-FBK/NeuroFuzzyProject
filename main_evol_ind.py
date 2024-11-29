@@ -90,7 +90,6 @@ def run_experiment(
 
     #Population
     max_generations = 50
-    mutation_individual_rate = 0.5 #Probabilità di mutazione di un individuo
     #mutation_rate = 0.1 #Probabilità di mutazione di un gene
 
     mu = 10 # = pop_size

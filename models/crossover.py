@@ -1,9 +1,10 @@
 import random
 import copy 
+
 SWAP4ALL_MFS = True # If True, swap all gaussian parameters of a feature, for all its membership functions.
 
 
-def crossover(parent1, parent2, crossover_rate=0.1):
+def crossover(parent1, parent2, crossover_rate=0.5):
     """
     Perform crossover between two individuals.
     This works by swapping some parameters of the two fuzzy neural networks.
