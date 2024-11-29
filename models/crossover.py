@@ -1,6 +1,5 @@
 import random
 import copy 
-
 SWAP4ALL_MFS = True # If True, swap all gaussian parameters of a feature, for all its membership functions.
 
 
