@@ -126,8 +126,10 @@ def run_experiment(
             best_fitness = fitness_eval
             best_guy = population[0]
             patience = max_patience
+            # print("New best individuo: ", best_guy.fitness)
         else: 
             patience -= 1
+            # print("Best individuo: ", best_guy.fitness)
 
         generation += 1
         
@@ -135,9 +137,11 @@ def run_experiment(
         print("best individuo (eval): ", fitness_eval)
         print("best individuo (test): ", population[0].calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
         print("patient: ", patience)
+        # breakpoint()
 
     print("\n\nEvolution part done:")
     print("Best individuo: ", best_guy.fitness)
+    print("Best individuo eval set: ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
     print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
 
 
