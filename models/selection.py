@@ -7,6 +7,7 @@ def selection(
         selection_mu,
         selection_lambda,
         mutation_rate,
+        crossover_rate,
         fitness_type,
         x,
         y,
@@ -36,7 +37,7 @@ def selection(
         if individual.fitness is None:
             individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
 
-    offspring = generate_offspring(population, selection_lambda, mutation_rate, method=method, tournament_size=tournament_size)
+    offspring = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
     for individual in offspring:
@@ -61,7 +62,7 @@ def tournament(population, tournament_size):
     return max(subset, key=lambda x: x.fitness)
 
 
-def generate_offspring(parents, selection_lambda, mutation_rate, method="tournament", tournament_size=3):
+def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate, method="tournament", tournament_size=3):
     """
     Generate new individuals from the parents, with probability of parent selection proportional to fitness.
     parents: list of Individual
@@ -85,7 +86,7 @@ def generate_offspring(parents, selection_lambda, mutation_rate, method="tournam
         else:
             parent1 = random.choices(parents, weights=parent_probabilities)[0]
             parent2 = random.choices(parents, weights=parent_probabilities)[0]
-        child = crossover(parent1, parent2)
+        child = crossover(parent1, parent2, crossover_rate)
         child.mutate(mutation_rate=mutation_rate)
         offspring.append(child)
     return offspring
