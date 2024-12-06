@@ -30,6 +30,15 @@ def initialize_population(pop_size, num_mfs, neuron_type, fuzzy_interpretation, 
     return population
 
 
+def get_population_performance(fitness_population):
+    mean_fitness = np.mean(fitness_population)
+    std_fitness = np.std(fitness_population)
+    max_fitness = np.max(fitness_population)
+    min_fitness = np.min(fitness_population)
+    
+    return mean_fitness, std_fitness, max_fitness, min_fitness
+
+
 def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.model_selection.train_test_split; ma dobbiamo aggiungere la libreria
     x_data, y_data = data[0], data[1]
     
@@ -39,6 +48,7 @@ def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.mo
     y_train, y_eval = y_data[:indice_split], y_data[indice_split:]    
     
     return (x_train, y_train), (x_eval, y_eval)
+
 
 def run_experiment(
     train_data,
@@ -151,21 +161,10 @@ def run_experiment(
                 best_guy = copy.deepcopy(individuo)
                 epoch_improoved = True
 
-        mean_performance_train = np.mean(performance_train)
-        std_performance_train = np.std(performance_train)
-        max_performance_train = np.max(performance_train)
-        min_performance_train = np.min(performance_train)
+        mean_performance_train, std_performance_train, max_performance_train, min_performance_train = get_population_performance(performance_train)
+        mean_performance_eval, std_performance_eval, max_performance_eval, min_performance_eval = get_population_performance(performance_eval)
+        mean_performance_test, std_performance_test, max_performance_test, min_performance_test = get_population_performance(performance_test)
 
-        mean_performance_eval = np.mean(performance_eval)
-        std_performance_eval = np.std(performance_eval)
-        max_performance_eval = np.max(performance_eval)
-        min_performance_eval = np.min(performance_eval)
-        
-        mean_performance_test = np.mean(performance_test)
-        std_performance_test = np.std(performance_test)
-        max_performance_test = np.max(performance_test)
-        min_performance_test = np.min(performance_test)
-        
         new_row = pd.DataFrame({"Epoch": [generation], "Train_max_fitness": [max_performance_train], "Train_min_fitness": [min_performance_train], "Train_avg_fitness": [mean_performance_train], "Train_std_fitness": [std_performance_train], "Dev_max_fitness": [max_performance_eval], "Dev_min_fitness": [min_performance_eval], "Dev_avg_fitness": [mean_performance_eval], "Dev_std_fitness": [std_performance_eval], "Test_max_fitness": [max_performance_test], "Test_min_fitness": [min_performance_test], "Test_avg_fitness": [mean_performance_test], "Test_std_fitness": [std_performance_test]})
         local_results = pd.concat([local_results, new_row], ignore_index=True)
 
@@ -245,7 +244,7 @@ if __name__ == "__main__":
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
 
     # used for debugging
-    """ local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
+    local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
     
     i_seed = 1 #np.random.default_rng(num_seeds)
     rng_seed = np.random.default_rng(i_seed)
@@ -273,7 +272,8 @@ if __name__ == "__main__":
                     local_results = local_results,
                     path_to_results = "")
     
-    local_results.to_csv("demo_results.csv") """
+    local_results.to_csv("demo_results.csv")
+    exit(0)
     
     global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
 
