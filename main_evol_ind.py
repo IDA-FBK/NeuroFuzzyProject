@@ -237,8 +237,8 @@ if __name__ == "__main__":
     crossover_rate = conf["crossover_rate"]
     max_generations = conf["max_generations"]
     max_patience = conf["max_patience"]
-    mu_values = conf["mu_values"]
-    lambda_values = conf["lambda_values"]
+    mu_values = conf["mu"]
+    lambda_values = conf["lambda_"]
     selection_strategies = conf["selection_strategies"]
     mutation_individual_rate = conf["mutation_individual_rate"]
     default_path_results = path_to_results + conf["path_to_results"]
@@ -286,8 +286,12 @@ if __name__ == "__main__":
                         for cross_rate in crossover_rate:
                             for max_gen in max_generations:
                                 for max_pat in max_patience:
+                                    if max_pat > max_gen:
+                                        continue
                                     for mu in mu_values:
                                         for lamb in lambda_values:
+                                            if mu > lamb:
+                                                continue
                                             for sel_str in selection_strategies:
                                                 
                                                 local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
