@@ -89,12 +89,12 @@ class FNNModel:
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
         
-        fitness = copy.deepcopy(evaluation_metrics_train[fitness_type])
+        fitness_value = evaluation_metrics_train[fitness_type] #Non serve una deep copy, l'oggetto è istanziato ogni volta e non viene salvato successivamente
         
         if update_fitness: # True only on the train set
-            self.fitness = fitness
+            self.fitness = fitness_value
         
-        return fitness
+        return fitness_value
     
     def mutate(self, mutation_rate=0.1):
         """

@@ -2,9 +2,6 @@ import random
 from models.crossover import *
 
 
-
-global max_f
-max_f = 0
 def selection(
         population,
         selection_mu,
@@ -31,7 +28,6 @@ def selection(
     x, y: input-output data for fitness calculation
     """
     
-    global max_f
     if selection_mu > selection_lambda:
         raise ValueError("selection_lambda must be greater than selection_mu")
     if selection_strategy not in ["plus", "comma"]:
@@ -45,7 +41,6 @@ def selection(
     offspring = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
-    
     for individual in offspring:
         if individual.fitness is None:
             individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
@@ -55,14 +50,6 @@ def selection(
         offspring += population
     offspring.sort(key=lambda x: x.fitness, reverse=True)
     
-    print([offspring[i].fitness for i in range(len(offspring))])
-    print(offspring[0].fitness)
-    print(max_f)
-    
-    if offspring[0].fitness < max_f:
-        print("che succ?")
-    
-    max_f = offspring[0].fitness if offspring[0].fitness > max_f else max_f
     return offspring[:selection_mu]
 
 
