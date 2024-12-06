@@ -1,5 +1,5 @@
 import argparse
-import os.path
+import os
 
 import numpy as np
 import pandas as pd
@@ -324,6 +324,7 @@ if __name__ == "__main__":
                                                 end_time = time.time()
                                                 elapsed_time = end_time - start_time
                                                 
+                                                os.makedirs(default_path_results, exist_ok=True)
                                                 local_results.to_csv(default_path_results + f"local_results_seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_mutrate_{mut_rate}_mutindrate_{mut_ind_rate}_crossrate_{cross_rate}_maxgen_{max_gen}_maxpat_{max_pat}_mu_{mu}_lambda_{lamb}_selstr_{sel_str}.csv")
                                                 
                                                 
