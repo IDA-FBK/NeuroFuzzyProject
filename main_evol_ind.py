@@ -19,11 +19,11 @@ import seaborn as sns
 import time
 
 
-def initialize_population(pop_size, num_mfs, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed):
+def initialize_population(pop_size, num_mfs, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed):
     population = []
     
     for _ in range(pop_size):
-        individuo = FNNModel(num_mfs=num_mfs, neuron_type=neuron_type, interpretation=fuzzy_interpretation, activation=activation, optimizer=optimizer, visualizeMF=False, mutation_ind_rate=mutation_ind_rate, rng_seed=rng_seed)
+        individuo = FNNModel(num_mfs=num_mfs, neuron_type=neuron_type, interpretation=fuzzy_interpretation, activation=activation, optimizer=optimizer, visualizeMF=False, mutation_ind_rate=mutation_ind_rate, data_encoding=data_encoding, rng_seed=rng_seed)
         individuo.initialize_individual(x_train)
         population.append(individuo)
         
@@ -112,7 +112,7 @@ def run_experiment(
     (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
     
     
-    population = initialize_population(mu, num_mfs, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
+    population = initialize_population(mu, num_mfs, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
     
     generation = 0
     best_fitness = 0
@@ -121,8 +121,6 @@ def run_experiment(
     patience = max_patience
     epoch_improoved = False
     #pbar = tqdm(range(1,max_generations))
-    
-    
 
     for generation in range(max_gen):
         if patience == 0:
@@ -135,15 +133,20 @@ def run_experiment(
         epoch_improoved = False
         
         performance_train = []
+        performance_train_2 = []
         performance_eval = []
         performance_test = []
         
         for individuo in population:
+            
+            fitness_train = individuo.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            performance_train.append(fitness_train) #DEBUG
+            
             fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
             performance_eval.append(fitness_eval)
             
-            fitness_train = individuo.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
-            performance_train.append(fitness_train)
+            fitness_train_2 = individuo.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            performance_train_2.append(fitness_train_2)  #DEBUG
             
             fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
             performance_test.append(fitness_test)
@@ -157,7 +160,13 @@ def run_experiment(
         std_performance_train = np.std(performance_train)
         max_performance_train = np.max(performance_train)
         min_performance_train = np.min(performance_train)
+        print("performance_train", performance_train)
+        print("max_performance_train", max_performance_train)
         
+        
+        print("performance_train_2", performance_train_2)
+        print("max_performance_train_2", np.max(performance_train_2))
+        print("\n\n")
         mean_performance_eval = np.mean(performance_eval)
         std_performance_eval = np.std(performance_eval)
         max_performance_eval = np.max(performance_eval)
@@ -180,16 +189,16 @@ def run_experiment(
         
         
         #Il best individuo è quello con la migliore performance sul validation set
-        #print("best individuo (results on train set): ", best_guy.fitness)
-        #print("best individuo (results on val set): ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
-        #print("best individuo (results on test set): ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
-        #print("patient: ", patience)
+        print("best individuo (results on train set): ", best_guy.fitness)
+        print("best individuo (results on val set): ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
+        print("best individuo (results on test set): ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
+        print("patient: ", patience)
         
 
-    #print("\n\nEvolution part done:") #Il best individuo è quello con la migliore performance sul validation set
-    #print("Best individuo: ", best_guy.fitness)
-    #print("Best individuo eval set: ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
-    #print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
+    print("\n\nEvolution part done:") #Il best individuo è quello con la migliore performance sul validation set
+    print("Best individuo: ", best_guy.fitness)
+    print("Best individuo eval set: ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
+    print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
     
     
     result_train = best_guy.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
@@ -253,29 +262,41 @@ if __name__ == "__main__":
             "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec.",
         ]
     ) """
+    local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
     
     
-    """ i_seed = 5 #np.random.default_rng(num_seeds)
+    i_seed = 1 #np.random.default_rng(num_seeds)
     rng_seed = np.random.default_rng(i_seed)
-    run_experiment(
+    result_train, result_eval, result_test, local_results = run_experiment(
                     data_train,
                     data_test,
                     data_encoding,
                     pred_method,
                     fitness_function,
-                    mutation_rate,
-                    map_class_dict,
-                    "andneuron_prod-probsum",
-                    2,
-                    activation,
-                    optimizer,
-                    i_seed,
-                    rng_seed,
-                    results_df,
-                    path_to_results
-                ) """
+                    mutation_rate=0.5,
+                    mutation_ind_rate=0.5,
+                    crossover_rate=0.5,
+                    max_gen = 10,
+                    max_patience= 1000,
+                    mu = 20, 
+                    lambda_ = 40,
+                    selection_strategy = "plus",
+                    map_class_dict = map_class_dict,
+                    neuron_type = "andneuron_prod-probsum",
+                    num_mfs = 2,
+                    activation = "linear",
+                    optimizer = "moore-penrose",
+                    i_seed = i_seed,
+                    rng_seed = rng_seed,
+                    local_results = local_results,
+                    path_to_results = "")
     
-    global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
+    local_results.to_csv("demo_results.csv")
+    
+    
+    exit(0) #DEBUG ONLY
+    
+    """ global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
 
     for i_seed in range(num_seeds):
         rng_seed = np.random.default_rng(i_seed)
@@ -348,7 +369,7 @@ if __name__ == "__main__":
             
         counter+=1
     
-    global_results.to_csv(default_path_results + complete_filename)
+    global_results.to_csv(default_path_results + complete_filename) """
     
     # compute mean and sd
     #calculate_avg_results(results_df, path_to_results)

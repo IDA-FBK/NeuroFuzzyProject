@@ -29,6 +29,7 @@ class FNNModel:
         optimizer="moore-penrose",
         visualizeMF=False,
         mutation_ind_rate = 0.5,
+        data_encoding = "one-hot-encoding",
         rng_seed=None
     ):
         """
@@ -55,6 +56,7 @@ class FNNModel:
         self.activation = activation
         self.optimizer = optimizer
         self.visualizeMF = visualizeMF
+        self.data_encoding = data_encoding
 
         if rng_seed is None:
             self.rng_seed = np.random.default_rng(0)
@@ -73,18 +75,26 @@ class FNNModel:
         fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
         logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
         
+        if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
+            raise ValueError("Invalid data encoding method")
+        
         # Random initialization of V
-        self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
+        if self.data_encoding == "one-hot-encoding":
+            self.V = self.rng_seed.random((logic_outputs.shape[1], 2))
+        elif self.data_encoding == "no-encoding":
+            self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
         #"Pesi" di ciascuna membership functions, per eseguire il miglior matching sugli esempi
 
 
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
         
-        if update_fitness: # True only on the train set
-            self.fitness = copy.deepcopy(evaluation_metrics_train[fitness_type])
+        fitness = copy.deepcopy(evaluation_metrics_train[fitness_type])
         
-        return evaluation_metrics_train[fitness_type]
+        if update_fitness: # True only on the train set
+            self.fitness = fitness
+        
+        return fitness
     
     def mutate(self, mutation_rate=0.1):
         """
