@@ -244,7 +244,7 @@ if __name__ == "__main__":
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
 
     # used for debugging
-    local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
+    """ local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
     
     i_seed = 1 #np.random.default_rng(num_seeds)
     rng_seed = np.random.default_rng(i_seed)
@@ -273,7 +273,7 @@ if __name__ == "__main__":
                     path_to_results = "")
     
     local_results.to_csv("demo_results.csv")
-    exit(0)
+    exit(0) """
     
     global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
 
