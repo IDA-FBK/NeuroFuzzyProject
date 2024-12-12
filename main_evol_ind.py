@@ -31,6 +31,15 @@ def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_int
     return population
 
 
+def get_population_performance(fitness_population):
+    mean_fitness = np.mean(fitness_population)
+    std_fitness = np.std(fitness_population)
+    max_fitness = np.max(fitness_population)
+    min_fitness = np.min(fitness_population)
+    
+    return mean_fitness, std_fitness, max_fitness, min_fitness
+
+
 def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.model_selection.train_test_split; ma dobbiamo aggiungere la libreria
     x_data, y_data = data[0], data[1]
     
@@ -40,6 +49,7 @@ def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.mo
     y_train, y_eval = y_data[:indice_split], y_data[indice_split:]    
     
     return (x_train, y_train), (x_eval, y_eval)
+
 
 def run_experiment(
     train_data,
@@ -123,8 +133,6 @@ def run_experiment(
     patience = max_patience
     epoch_improoved = False
     #pbar = tqdm(range(1,max_generations))
-    
-    
 
     for generation in range(max_gen):
         if patience == 0:
@@ -141,11 +149,11 @@ def run_experiment(
         performance_test = []
         
         for individuo in population:
+            fitness_train = individuo. fitness
+            performance_train.append(fitness_train)
+            
             fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
             performance_eval.append(fitness_eval)
-            
-            fitness_train = individuo.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
-            performance_train.append(fitness_train)
             
             fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
             performance_test.append(fitness_test)
@@ -155,21 +163,10 @@ def run_experiment(
                 best_guy = copy.deepcopy(individuo)
                 epoch_improoved = True
 
-        mean_performance_train = np.mean(performance_train)
-        std_performance_train = np.std(performance_train)
-        max_performance_train = np.max(performance_train)
-        min_performance_train = np.min(performance_train)
-        
-        mean_performance_eval = np.mean(performance_eval)
-        std_performance_eval = np.std(performance_eval)
-        max_performance_eval = np.max(performance_eval)
-        min_performance_eval = np.min(performance_eval)
-        
-        mean_performance_test = np.mean(performance_test)
-        std_performance_test = np.std(performance_test)
-        max_performance_test = np.max(performance_test)
-        min_performance_test = np.min(performance_test)
-        
+        mean_performance_train, std_performance_train, max_performance_train, min_performance_train = get_population_performance(performance_train)
+        mean_performance_eval, std_performance_eval, max_performance_eval, min_performance_eval = get_population_performance(performance_eval)
+        mean_performance_test, std_performance_test, max_performance_test, min_performance_test = get_population_performance(performance_test)
+
         new_row = pd.DataFrame({"Epoch": [generation], "Train_max_fitness": [max_performance_train], "Train_min_fitness": [min_performance_train], "Train_avg_fitness": [mean_performance_train], "Train_std_fitness": [std_performance_train], "Dev_max_fitness": [max_performance_eval], "Dev_min_fitness": [min_performance_eval], "Dev_avg_fitness": [mean_performance_eval], "Dev_std_fitness": [std_performance_eval], "Test_max_fitness": [max_performance_test], "Test_min_fitness": [min_performance_test], "Test_avg_fitness": [mean_performance_test], "Test_std_fitness": [std_performance_test]})
         local_results = pd.concat([local_results, new_row], ignore_index=True)
 

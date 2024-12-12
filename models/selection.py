@@ -30,7 +30,7 @@ def selection(
     """
     
     if selection_mu > selection_lambda:
-        raise ValueError("selection_mu must be greater than selection_lambda")
+        raise ValueError("selection_lambda must be greater than selection_mu")
     if selection_strategy not in ["plus", "comma"]:
         raise ValueError("selection_strategy must be either 'plus' or 'comma'")
     
@@ -45,7 +45,7 @@ def selection(
     for individual in offspring:
         if individual.fitness is None:
             individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
-
+    
     # Select the best individuals according to the selection strategy
     if selection_strategy == "plus":
         offspring += population

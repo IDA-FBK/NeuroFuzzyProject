@@ -80,6 +80,9 @@ class FNNModel:
         if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
             raise ValueError("Invalid data encoding method")
         
+        if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
+            raise ValueError("Invalid data encoding method")
+        
         # Random initialization of V
         if self.data_encoding == "one-hot-encoding":
             self.V = self.rng_seed.random((logic_outputs.shape[1], 2))
@@ -93,7 +96,9 @@ class FNNModel:
         
         if update_fitness: # True only on the train set
             self.fitness = fitness_value
+            self.fitness = fitness_value
         
+        return fitness_value
         return fitness_value
     
     def mutate(self, mutation_rate=0.1):
