@@ -23,12 +23,14 @@ class FNNModel:
     def __init__(
         self,
         num_mfs,
+        update_gene="all",
         neuron_type="andneuron",
         interpretation="prod-probsum",
         activation="linear",
         optimizer="moore-penrose",
         visualizeMF=False,
         mutation_ind_rate = 0.5,
+        data_encoding = "one-hot-encoding",
         rng_seed=None
     ):
         """
@@ -55,6 +57,7 @@ class FNNModel:
         self.activation = activation
         self.optimizer = optimizer
         self.visualizeMF = visualizeMF
+        self.data_encoding = data_encoding
 
         if rng_seed is None:
             self.rng_seed = np.random.default_rng(0)
@@ -68,23 +71,30 @@ class FNNModel:
         self.axioms = []  # Stores axioms generated from fuzzy rules
         self.fitness = None
         self.mutation_ind_rate = mutation_ind_rate # Probability for the individual to mutate 
+        self.update_gene = update_gene
         
     def initialize_individual(self, x_train):
         fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
         logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
         
+        if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
+            raise ValueError("Invalid data encoding method")
+        
         # Random initialization of V
-        self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
-        #"Pesi" di ciascuna membership functions, per eseguire il miglior matching sugli esempi
+        if self.data_encoding == "one-hot-encoding":
+            self.V = self.rng_seed.random((logic_outputs.shape[1], 2))
+        elif self.data_encoding == "no-encoding":
+            self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
 
 
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
+        fitness_value = evaluation_metrics_train[fitness_type]
         
         if update_fitness: # True only on the train set
-            self.fitness = copy.deepcopy(evaluation_metrics_train[fitness_type])
+            self.fitness = fitness_value
         
-        return evaluation_metrics_train[fitness_type]
+        return fitness_value
     
     def mutate(self, mutation_rate=0.1):
         """
@@ -97,16 +107,19 @@ class FNNModel:
             None
         """
         if np.random.rand() < self.mutation_ind_rate:
-            self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
-            self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
-            
-            #The gaussian part
-            for feature_index in range(len(self.mf_params)):
-                for mf_index in range(self.num_mfs):
-                    self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-                    self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-                    if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
-                        self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
+            if self.update_gene == "all" or self.update_gene == "V":
+                self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
+
+            elif self.update_gene == "all" or self.update_gene == "neuron_weights":
+                self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
+
+            elif self.update_gene == "all" or self.update_gene == "mf_params":
+                for feature_index in range(len(self.mf_params)):
+                    for mf_index in range(self.num_mfs):
+                        self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                        self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                        if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
+                            self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
 
         # Reset fitness
         self.fitness = None

@@ -8,6 +8,7 @@ def selection(
         selection_lambda,
         mutation_rate,
         crossover_rate,
+        rng_seed,
         fitness_type,
         x,
         y,
@@ -27,6 +28,7 @@ def selection(
     selection_strategy: str, either "plus" or "comma"
     x, y: input-output data for fitness calculation
     """
+    
     if selection_mu > selection_lambda:
         raise ValueError("selection_mu must be greater than selection_lambda")
     if selection_strategy not in ["plus", "comma"]:
@@ -37,7 +39,7 @@ def selection(
         if individual.fitness is None:
             individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
 
-    offspring = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, method=method, tournament_size=tournament_size)
+    offspring = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, rng_seed, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
     for individual in offspring:
@@ -52,17 +54,17 @@ def selection(
     return offspring[:selection_mu]
 
 
-def tournament(population, tournament_size):
+def tournament(population, rng_seed, tournament_size):
     """
     Select the best individual from a random subset of the population.
     population: list of individuals
     tournament_size: int, number of individuals in the subset
     """
-    subset = random.sample(population, tournament_size)
+    subset = rng_seed.choice(population, tournament_size, replace=False)
     return max(subset, key=lambda x: x.fitness)
 
 
-def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate, method="tournament", tournament_size=3):
+def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate, rng_seed, method="tournament", tournament_size=3):
     """
     Generate new individuals from the parents, with probability of parent selection proportional to fitness.
     parents: list of Individual
@@ -81,12 +83,12 @@ def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate,
     offspring = []
     for _ in range(selection_lambda):
         if method == "tournament":
-            parent1 = tournament(parents, tournament_size=tournament_size)
-            parent2 = tournament(parents, tournament_size=tournament_size)
+            parent1 = tournament(parents, rng_seed, tournament_size=tournament_size)
+            parent2 = tournament(parents, rng_seed, tournament_size=tournament_size)
         else:
-            parent1 = random.choices(parents, weights=parent_probabilities)[0]
-            parent2 = random.choices(parents, weights=parent_probabilities)[0]
-        child = crossover(parent1, parent2, crossover_rate)
+            parent1 = rng_seed.choices(parents, weights=parent_probabilities)[0]
+            parent2 = rng_seed.choices(parents, weights=parent_probabilities)[0]
+        child = crossover(parent1, parent2, rng_seed, crossover_rate )
         child.mutate(mutation_rate=mutation_rate)
         offspring.append(child)
     return offspring
