@@ -225,7 +225,22 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "preeclampsia":
-        # Assuming the preclampsia dataset is stored in 'data/preeclampsia.csv'
+        # DESCRIPTION:
+        # -------------------------
+        # -------------------------
+        # NUMBER OF INSTANCES: 1640
+        # NUMBER OF ATTRIBUTES: paulo's version uses 6 plus class (but original one has more).
+        # MISSING VALUES: No
+        #
+        # -------------------------
+        # AVAILABLE AT: https://www.icpsr.umich.edu/web/HMCA/studies/21640 (restricted access)
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://www.sciencedirect.com/science/article/pii/S0020025524004699 (check others?)
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+        #
+        # Assuming the preclampsia dataset is stored in 'data/dataset/preeclampsia.csv'
         file_path = "data/datasets/preeclampsia.csv"
 
         df = pd.read_csv(file_path, sep=",")
