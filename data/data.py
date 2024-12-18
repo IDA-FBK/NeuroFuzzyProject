@@ -154,21 +154,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 0
             y = y.reshape(-1, 1)
 
-    elif dataset == "diabetes":
-        # Assuming the diabetes dataset is stored in 'data/diabetes.csv'
-        file_path = "data/datasets/diabetes.csv"
-
-        df = pd.read_csv(file_path)
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
     elif dataset == "gestacional":
         # Assuming the gestacional dataset is stored in 'data/gestacionaldiabetes.csv'
         file_path = "data/datasets/gestacionaldiabetes.csv"
