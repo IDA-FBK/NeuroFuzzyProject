@@ -235,13 +235,15 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
     # Data normalization
     scaler = StandardScaler()
-    x_normalized = scaler.fit_transform(x)
 
     x_train, x_test, y_train, y_test = train_test_split(
-        x_normalized, y, test_size=test_size, random_state=seed
+        x, y, test_size=test_size, random_state=seed
     )
 
-    data_train = (x_train, y_train)
-    data_test = (x_test, y_test)
+    x_train_normalized = scaler.fit_transform(x_train)
+    x_test_normalized = scaler.transform(x_test)
+
+    data_train = (x_train_normalized, y_train)
+    data_test = (x_test_normalized, y_test)
 
     return data_train, data_test, map_class_dict
