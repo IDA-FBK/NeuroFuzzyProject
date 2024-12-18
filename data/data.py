@@ -76,7 +76,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # POSSIBLE COMPARISON (TO INVESTIGATE):
         # - paper: https://link.springer.com/article/10.1186/s12911-024-02582-4
         # - code: https://github.com/ChristelSirocchi/medical-informed-ML
-        # DOUBTS: missing values? scale features?
+        # DOUBTS: Are the missing values? How are features scaled in other approaches?
 
         # Assuming the diabetes dataset is stored in 'data/datasets/diabetes.csv'
         file_path = "data/datasets/diabetes.csv"
@@ -110,6 +110,36 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "mammography":
+        # DESCRIPTION:
+        # -------------------------
+        # This data set can be used to predict the severity (benign or malignant) of a mammographic mass lesion
+        # from BI-RADS attributes and the patient's age. It contains a BI-RADS assessment, the patient's age and three
+        # BI-RADS attributes together with the ground truth (the severity field) for 516 benign and 445 malignant masses
+        # that have been identified on full field digital mammograms collected at the Institute of
+        # Radiology of the University Erlangen-Nuremberg between 2003 and 2006
+        # -------------------------
+        # NUMBER OF INSTANCES: should be 961 but in Paulo's version is 830
+        # NUMBER OF ATTRIBUTES:  5 plus class
+        #       1. BI-RADS assessment: 1 to 5 (ordinal, non-predictive!)
+        #       2. Age: patient's age in years (integer)
+        #       3. Shape: mass shape: round=1 oval=2 lobular=3 irregular=4 (nominal)
+        #       4. Margin: mass margin: circumscribed=1 microlobulated=2 obscured=3 ill-defined=4 spiculated=5 (nominal)
+        #       5. Density: mass density high=1 iso=2 low=3 fat-containing=4 (ordinal)
+        #       6. Class variable: Severity: benign=0 or malignant=1 (binominal, goal field!)
+        # MISSING VALUES:
+        #     - BI-RADS assessment:    2
+        #     - Age:                   5
+        #     - Shape:                31
+        #     - Margin:               48
+        #     - Density:              76
+        #     - Severity:              0
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/161/mammographic+mass
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://link.springer.com/article/10.1007/s10552-024-01942-9
+        # - code: ?
+        # DOUBTS: How are missing values handled and features scaled in other approaches?
+
         # Assuming the diabetes dataset is stored in 'data/mammographic_masses.txt'
         file_path = "data/datasets/mammographic_masses.txt"
 
