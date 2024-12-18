@@ -259,21 +259,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 0
             y = y.reshape(-1, 1)
 
-    elif dataset == "transfusion":
-        # Assuming the transfusion dataset is stored in 'data/transfusion.txt'
-        file_path = "data/datasets/Transfusion.txt"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
     elif dataset == "haberman":
         # Assuming the haberman dataset is stored in 'data/haberman'
         file_path = "data/datasets/haberman.data"
