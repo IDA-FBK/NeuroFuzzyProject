@@ -72,68 +72,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 0
             y = y.reshape(-1, 1)
 
-    elif dataset == "liver":
-        # Assuming the diabetes dataset is stored in 'liver_data.txt'
-        file_path = "data/datasets/liver_data.txt"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-            map_class_dict[0] = 1
-            map_class_dict[1] = 2
-        elif data_encoding == "no-encoding":
-            y[y == 2] = -1
-            map_class_dict[-1] = 2
-            y = y.reshape(-1, 1)
-
-    elif dataset == "mammography":
-        # DESCRIPTION:
-        # -------------------------
-        # This data set can be used to predict the severity (benign or malignant) of a mammographic mass lesion
-        # from BI-RADS attributes and the patient's age. It contains a BI-RADS assessment, the patient's age and three
-        # BI-RADS attributes together with the ground truth (the severity field) for 516 benign and 445 malignant masses
-        # that have been identified on full field digital mammograms collected at the Institute of
-        # Radiology of the University Erlangen-Nuremberg between 2003 and 2006
-        # -------------------------
-        # NUMBER OF INSTANCES: should be 961 but in Paulo's version is 830
-        # NUMBER OF ATTRIBUTES:  5 plus class
-        #       1. BI-RADS assessment: 1 to 5 (ordinal, non-predictive!)
-        #       2. Age: patient's age in years (integer)
-        #       3. Shape: mass shape: round=1 oval=2 lobular=3 irregular=4 (nominal)
-        #       4. Margin: mass margin: circumscribed=1 microlobulated=2 obscured=3 ill-defined=4 spiculated=5 (nominal)
-        #       5. Density: mass density high=1 iso=2 low=3 fat-containing=4 (ordinal)
-        #       6. Class variable: Severity: benign=0 or malignant=1 (binominal, goal field!)
-        # MISSING VALUES:
-        #     - BI-RADS assessment:    2
-        #     - Age:                   5
-        #     - Shape:                31
-        #     - Margin:               48
-        #     - Density:              76
-        #     - Severity:              0
-        # -------------------------
-        # UCI: https://archive.ics.uci.edu/dataset/161/mammographic+mass
-        # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper: https://link.springer.com/article/10.1007/s10552-024-01942-9
-        # - code: ?
-        # DOUBTS: How are missing values handled and features scaled in other approaches?
-
-        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.txt'
-        file_path = "data/datasets/mammographic_masses.txt"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
     elif dataset == "gestational":
         # DESCRIPTION:
         # -------------------------
@@ -166,86 +104,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         df = pd.read_csv(file_path, sep=",")
         x = df.iloc[:, :-1].values  # Features
         y = df.iloc[:, -1].values  # Target variable
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
-    elif dataset == "sepsis":
-        # DESCRIPTION:
-        # -------------------------
-        # The dataset consists of 110,204 admissions of 84,811 hospitalized subjects between 2011 and 2012 in Norway
-        # who were diagnosed with infections, systemic inflammatory response syndrome, sepsis by causative microbes, or
-        # septic shock. The prediction task is to determine whether a patient survived or is deceased at a time of about
-        # 9 days after collecting their medical record at the hospital. This is an important prediction problem in
-        # clinical medicine. Sepsis is a life-threatening condition triggered by an immune overreaction to infection,
-        # leading to organ failure or even death. Sepsis is associated with immediate death risk, often killing patients
-        # within one hour. This renders many laboratory tests and hospital analyses impractical for timely diagnosis and
-        # treatment. Being able to predict the survival of patients within minutes with as few and easy-to-retrieve
-        # medical features as possible is very important.
-        # -------------------------
-        # NUMBER OF INSTANCES: 110,204
-        # NUMBER OF ATTRIBUTES:  3 plus class
-        #       1. Age: Age of the patient in years
-        #       2. Sex of person (0: male, 1: female)
-        #       3. Episode_number (Number of prior Sepsis episodes)
-        #       4. Class variable: Status of the patient after 9,351 days of being admitted to the hospital.
-        #          Values are encoded as follows: {1: Alive, 0: Dead}
-        # MISSING VALUES: No
-        #
-        # Are there recommended data splits?
-        #
-        # No recommendation, standard train-test split could be used. Can use three-way holdout split
-        # (i.e., training, validation/development, testing) when doing model selection.
-        # NOTE: there is validation cohort from South Korea used by Chicco and Jurman (2020) as an external validation
-        # cohort to confirm the generalizability of their proposed approach.
-        # -------------------------
-        # UCI: https://archive.ics.uci.edu/dataset/827/sepsis+survival+minimal+clinical+records
-        # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper: https://pubmed.ncbi.nlm.nih.gov/33051513/ (heck others?)
-        # - code: ?
-        #
-        # DOUBTS: Are features scaled in other approaches using this dataset?
-
-        # Assuming the sepsis dataset is stored in 'data/dataset/sepsis.csv'
-        file_path = "data/datasets/sepsis.csv"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
-    elif dataset == "preeclampsia":
-        # DESCRIPTION:
-        # -------------------------
-        # -------------------------
-        # NUMBER OF INSTANCES: 1640
-        # NUMBER OF ATTRIBUTES: paulo's version uses 6 plus class (but original one has more).
-        # MISSING VALUES: No
-        #
-        # -------------------------
-        # AVAILABLE AT: https://www.icpsr.umich.edu/web/HMCA/studies/21640 (restricted access)
-        # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper: https://www.sciencedirect.com/science/article/pii/S0020025524004699 (check others?)
-        # - code: ?
-        #
-        # DOUBTS: Are features scaled in other approaches using this dataset?
-        #
-        # Assuming the preclampsia dataset is stored in 'data/dataset/preeclampsia.csv'
-        file_path = "data/datasets/preeclampsia.csv"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
 
         if data_encoding == "one-hot-encoding":
             y = get_one_encoding(y)
@@ -350,6 +208,148 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         elif data_encoding == "no-encoding":
             y[y == 2] = -1
             map_class_dict[-1] = 2
+            y = y.reshape(-1, 1)
+
+    elif dataset == "liver":
+        # Assuming the diabetes dataset is stored in 'liver_data.txt'
+        file_path = "data/datasets/liver_data.txt"
+
+        df = pd.read_csv(file_path, sep=",")
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+            map_class_dict[0] = 1
+            map_class_dict[1] = 2
+        elif data_encoding == "no-encoding":
+            y[y == 2] = -1
+            map_class_dict[-1] = 2
+            y = y.reshape(-1, 1)
+
+    elif dataset == "mammography":
+        # DESCRIPTION:
+        # -------------------------
+        # This data set can be used to predict the severity (benign or malignant) of a mammographic mass lesion
+        # from BI-RADS attributes and the patient's age. It contains a BI-RADS assessment, the patient's age and three
+        # BI-RADS attributes together with the ground truth (the severity field) for 516 benign and 445 malignant masses
+        # that have been identified on full field digital mammograms collected at the Institute of
+        # Radiology of the University Erlangen-Nuremberg between 2003 and 2006
+        # -------------------------
+        # NUMBER OF INSTANCES: should be 961 but in Paulo's version is 830
+        # NUMBER OF ATTRIBUTES:  5 plus class
+        #       1. BI-RADS assessment: 1 to 5 (ordinal, non-predictive!)
+        #       2. Age: patient's age in years (integer)
+        #       3. Shape: mass shape: round=1 oval=2 lobular=3 irregular=4 (nominal)
+        #       4. Margin: mass margin: circumscribed=1 microlobulated=2 obscured=3 ill-defined=4 spiculated=5 (nominal)
+        #       5. Density: mass density high=1 iso=2 low=3 fat-containing=4 (ordinal)
+        #       6. Class variable: Severity: benign=0 or malignant=1 (binominal, goal field!)
+        # MISSING VALUES:
+        #     - BI-RADS assessment:    2
+        #     - Age:                   5
+        #     - Shape:                31
+        #     - Margin:               48
+        #     - Density:              76
+        #     - Severity:              0
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/161/mammographic+mass
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://link.springer.com/article/10.1007/s10552-024-01942-9
+        # - code: ?
+        # DOUBTS: How are missing values handled and features scaled in other approaches?
+
+        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.txt'
+        file_path = "data/datasets/mammographic_masses.txt"
+
+        df = pd.read_csv(file_path, sep=",")
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            y[y == 0] = -1
+            map_class_dict[-1] = 0
+            y = y.reshape(-1, 1)
+
+    elif dataset == "preeclampsia":
+        # DESCRIPTION:
+        # -------------------------
+        # -------------------------
+        # NUMBER OF INSTANCES: 1640
+        # NUMBER OF ATTRIBUTES: paulo's version uses 6 plus class (but original one has more).
+        # MISSING VALUES: No
+        #
+        # -------------------------
+        # AVAILABLE AT: https://www.icpsr.umich.edu/web/HMCA/studies/21640 (restricted access)
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://www.sciencedirect.com/science/article/pii/S0020025524004699 (check others?)
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+        #
+        # Assuming the preclampsia dataset is stored in 'data/dataset/preeclampsia.csv'
+        file_path = "data/datasets/preeclampsia.csv"
+
+        df = pd.read_csv(file_path, sep=",")
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            y[y == 0] = -1
+            map_class_dict[-1] = 0
+            y = y.reshape(-1, 1)
+
+    elif dataset == "sepsis":
+        # DESCRIPTION:
+        # -------------------------
+        # The dataset consists of 110,204 admissions of 84,811 hospitalized subjects between 2011 and 2012 in Norway
+        # who were diagnosed with infections, systemic inflammatory response syndrome, sepsis by causative microbes, or
+        # septic shock. The prediction task is to determine whether a patient survived or is deceased at a time of about
+        # 9 days after collecting their medical record at the hospital. This is an important prediction problem in
+        # clinical medicine. Sepsis is a life-threatening condition triggered by an immune overreaction to infection,
+        # leading to organ failure or even death. Sepsis is associated with immediate death risk, often killing patients
+        # within one hour. This renders many laboratory tests and hospital analyses impractical for timely diagnosis and
+        # treatment. Being able to predict the survival of patients within minutes with as few and easy-to-retrieve
+        # medical features as possible is very important.
+        # -------------------------
+        # NUMBER OF INSTANCES: 110,204
+        # NUMBER OF ATTRIBUTES:  3 plus class
+        #       1. Age: Age of the patient in years
+        #       2. Sex of person (0: male, 1: female)
+        #       3. Episode_number (Number of prior Sepsis episodes)
+        #       4. Class variable: Status of the patient after 9,351 days of being admitted to the hospital.
+        #          Values are encoded as follows: {1: Alive, 0: Dead}
+        # MISSING VALUES: No
+        #
+        # Are there recommended data splits?
+        #
+        # No recommendation, standard train-test split could be used. Can use three-way holdout split
+        # (i.e., training, validation/development, testing) when doing model selection.
+        # NOTE: there is validation cohort from South Korea used by Chicco and Jurman (2020) as an external validation
+        # cohort to confirm the generalizability of their proposed approach.
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/827/sepsis+survival+minimal+clinical+records
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://pubmed.ncbi.nlm.nih.gov/33051513/ (heck others?)
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
+        # Assuming the sepsis dataset is stored in 'data/dataset/sepsis.csv'
+        file_path = "data/datasets/sepsis.csv"
+
+        df = pd.read_csv(file_path, sep=",")
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            y[y == 0] = -1
+            map_class_dict[-1] = 0
             y = y.reshape(-1, 1)
 
     # Data normalization
