@@ -297,7 +297,51 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "heart":
-        # Assuming the heart dataset is stored in 'data/heart.txt'
+        # DESCRIPTION:
+        # -------------------------
+        # This database contains 76 attributes, but all published experiments refer to using a subset of 14 of them.
+        # In particular, the Cleveland database is the only one that has been used by ML researchers to date.
+        # The "goal" field refers to the presence of heart disease in the patient.  It is integer valued from 0
+        # (no presence) to 4. Experiments with the Cleveland database have concentrated on simply attempting to
+        # distinguish presence (values 1,2,3,4) from absence (value 0). The names and social security numbers of the
+        # patients were recently removed from the database, replaced with dummy values.
+        #
+        # One file has been "processed", that one containing the Cleveland database.  All four unprocessed files also exist in this directory.
+        # -------------------------
+        # NUMBER OF INSTANCES: should be 303 but in Paulo's version is 270
+        # NUMBER OF ATTRIBUTES:  5 plus class
+        #       1.  Age: age in years (integer)
+        #       2.  Sex: (1 = male; 0 = female) (categorical)
+        #       3.  Cp: (categorical)
+        #       4.  Trestbps: resting blood pressure (on admission to the hospital) (integer)
+        #       5.  Chol: serum cholestoral (integer)
+        #       6.  Fbs: fasting blood sugar > 120 mg/dl (1 = true; 0 = false) (categorical)
+        #       7.  Restecg: resting electrocardiographic results
+        #               -- Value 0: normal
+        #               -- Value 1: having ST-T wave abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)
+        #               -- Value 2: showing probable or definite left ventricular hypertrophy by Estes' criteria(categorical)
+        #       8.  Thalach: maximum heart rate achieved (integer)
+        #       9.  Exang: exercise induced angina (1 = yes; 0 = no)
+        #       10. Oldpeak: ST depression induced by exercise relative to rest (integer)
+        #       11. Slope: the slope of the peak exercise ST segment
+        #               -- Value 1: upsloping
+        #               -- Value 2: flat
+        #               -- Value 3: downsloping
+        #       12. Ca: number of major vessels (0-3) colored by flourosopy
+        #       13. Thal: 3 = normal; 6 = fixed defect; 7 = reversable defect
+        #       14. Num (predicted attribute): diagnosis of heart disease (angiographic disease status)
+        #         -- Value 0: < 50% diameter narrowing (0 absence)
+        #         -- Value 1: > 50% diameter narrowing (1,2,3,4 collapse to 1 presence)
+        #         (in any major vessel: attributes 59 through 68 are vessels)
+        # MISSING VALUES: No (at least for the 14 used attributes)
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/45/heart+disease
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - link (https://archive.ics.uci.edu/dataset/45/heart+disease) (probably with the version having 303 samples)
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
+        # TODO: If we use version with 303, we have to do class collapsing to 0, 1 (binary problem)
+        # Assuming the heart dataset is stored in 'data/dataset/heart.txt'
         file_path = "data/datasets/heart.txt"
 
         df = pd.read_csv(file_path, sep=",")
