@@ -154,7 +154,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             map_class_dict[-1] = 0
             y = y.reshape(-1, 1)
 
-    elif dataset == "gestacional":
+    elif dataset == "gestational":
         # DESCRIPTION:
         # -------------------------
         # Gestational diabetes is a type of high blood sugar that develops during pregnancy. It can occur at any stage
@@ -181,7 +181,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
         # Assuming the gestacional dataset is stored in 'data/dataset/gestacionaldiabetes.csv'
-        file_path = "data/datasets/gestacionaldiabetes.csv"
+        file_path = "data/datasets/gestational_diabetes.csv"
 
         df = pd.read_csv(file_path, sep=",")
         x = df.iloc[:, :-1].values  # Features
