@@ -260,6 +260,26 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "haberman":
+        # DESCRIPTION:
+        # -------------------------
+        # The dataset contains cases from a study that was conducted between 1958 and 1970 at the University of
+        # Chicago's Billings Hospital on the survival of patients who had undergone surgery for breast cancer.
+        # -------------------------
+        # NUMBER OF INSTANCES: 306
+        # NUMBER OF ATTRIBUTES:  3 plus class
+        #       1. Age: Age of patient at time of operation (integer)
+        #       2. Operation Year: Patient's year of operation (onteger)
+        #       3. Number of positive axillary nodes detected  (Integer)
+        #       4. Class variable: Survival Status (1 = the patient survived 5 years or longer, 2 = the patient died within 5 year)
+        # MISSING VALUES: No
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/43/haberman+s+survival
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: ?
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
         # Assuming the haberman dataset is stored in 'data/haberman'
         file_path = "data/datasets/haberman.data"
 
