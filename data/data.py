@@ -52,17 +52,41 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y.reshape(-1, 1)
 
     elif dataset == "diabetes":
-        # Assuming the diabetes dataset is stored in 'diabetes.csv'
+        # DESCRIPTION:
+        # -------------------------
+        # The objective of the dataset is to diagnostically predict whether or not a patient has diabetes,
+        # based on certain diagnostic measurements included in the dataset. Several constraints were placed on the
+        # selection of these instances from a larger database. In particular, all patients here are females at least
+        # 21 years old of Pima Indian heritage.
+        # -------------------------
+        # NUMBER OF INSTANCES: 768
+        # NUMBER OF ATTRIBUTES:  8 plus class (all numeric-valued)
+        #       1. Number of times pregnant
+        #       2. Plasma glucose concentration a 2 hours in an oral glucose tolerance test
+        #       3. Diastolic blood pressure (mm Hg)
+        #       4. Triceps skin fold thickness (mm)
+        #       5. 2-Hour serum insulin (mu U/ml)
+        #       6. Body mass index (weight in kg/(height in m)^2)
+        #       7. Diabetes pedigree function
+        #       8. Age (years)
+        #       9. Class variable (0 or 1)
+        # -------------------------
+        # KAGGLE: https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database
+        # MORE INFO: https://www.openml.org/search?type=data&sort=runs&id=37&status=active
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://link.springer.com/article/10.1186/s12911-024-02582-4
+        # - code: https://github.com/ChristelSirocchi/medical-informed-ML
+        # DOUBTS: missing values? scale features?
+
+        # Assuming the diabetes dataset is stored in 'data/datasets/diabetes.csv'
         file_path = "data/datasets/diabetes.csv"
 
-        # Lendo o arquivo
         df = pd.read_csv(file_path)
         x = df.iloc[:, :-1].values  # Features
         y = df.iloc[:, -1].values  # Target variable
 
         if data_encoding == "one-hot-encoding":
             y = get_one_encoding(y)
-            map_class_dict = {c-1:c for c in np.unique(y)}
         elif data_encoding == "no-encoding":
             y[y == 0] = -1
             map_class_dict[-1] = 0
