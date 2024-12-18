@@ -195,7 +195,42 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "sepsis":
-        # Assuming the sepsis dataset is stored in 'data/sepsis.csv'
+        # DESCRIPTION:
+        # -------------------------
+        # The dataset consists of 110,204 admissions of 84,811 hospitalized subjects between 2011 and 2012 in Norway
+        # who were diagnosed with infections, systemic inflammatory response syndrome, sepsis by causative microbes, or
+        # septic shock. The prediction task is to determine whether a patient survived or is deceased at a time of about
+        # 9 days after collecting their medical record at the hospital. This is an important prediction problem in
+        # clinical medicine. Sepsis is a life-threatening condition triggered by an immune overreaction to infection,
+        # leading to organ failure or even death. Sepsis is associated with immediate death risk, often killing patients
+        # within one hour. This renders many laboratory tests and hospital analyses impractical for timely diagnosis and
+        # treatment. Being able to predict the survival of patients within minutes with as few and easy-to-retrieve
+        # medical features as possible is very important.
+        # -------------------------
+        # NUMBER OF INSTANCES: 110,204
+        # NUMBER OF ATTRIBUTES:  3 plus class
+        #       1. Age: Age of the patient in years
+        #       2. Sex of person (0: male, 1: female)
+        #       3. Episode_number (Number of prior Sepsis episodes)
+        #       4. Class variable: Status of the patient after 9,351 days of being admitted to the hospital.
+        #          Values are encoded as follows: {1: Alive, 0: Dead}
+        # MISSING VALUES: No
+        #
+        # Are there recommended data splits?
+        #
+        # No recommendation, standard train-test split could be used. Can use three-way holdout split
+        # (i.e., training, validation/development, testing) when doing model selection.
+        # NOTE: there is validation cohort from South Korea used by Chicco and Jurman (2020) as an external validation
+        # cohort to confirm the generalizability of their proposed approach.
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/827/sepsis+survival+minimal+clinical+records
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: https://pubmed.ncbi.nlm.nih.gov/33051513/ (heck others?)
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
+        # Assuming the sepsis dataset is stored in 'data/dataset/sepsis.csv'
         file_path = "data/datasets/sepsis.csv"
 
         df = pd.read_csv(file_path, sep=",")
