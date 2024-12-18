@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd  # Import pandas to load and process the CSV file
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.datasets import load_iris
 
 
 def get_one_encoding(labels):
@@ -32,26 +31,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     """
 
     map_class_dict = {}
-    if dataset == "synthetic":
-        rng = np.random.default_rng(seed)
-        # Synthetic dataset generation code here
-
-    elif dataset == "iris":
-        # Load the Iris dataset
-        iris = load_iris()
-        x = iris.data
-        y = iris.target
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            # Convert to binary classification problem
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y[y > 0] = 1
-            y.reshape(-1, 1)
-
-    elif dataset == "diabetes":
+    if dataset == "diabetes":
         # DESCRIPTION:
         # -------------------------
         # The objective of the dataset is to diagnostically predict whether or not a patient has diabetes,

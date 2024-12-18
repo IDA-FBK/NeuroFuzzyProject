@@ -123,18 +123,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "-dataset", type=str, default="liver", help="specify the dataset to use"
+        "-dataset", type=str, default="diabetes", help="specify the dataset to use"
     )
     parser.add_argument(
         "-path_to_conf",
         type=str,
-        default="./experiments/configurations/iris/conf-00.json",
+        default="./experiments/configurations/diabetes/conf-01.json",
         help="configuration file for the current experiment",
     )
     parser.add_argument(
         "-path_to_results",
         type=str,
-        default="./experiments/results/liver3/",
+        default="./experiments/results/diabetes/",
         help="directory where to store the results",
     )
 

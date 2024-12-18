@@ -61,7 +61,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "-dataset", type=str, default="iris", help="specify the dataset to use"
+        "-dataset", type=str, default="diabetes", help="specify the dataset to use"
     )
     parser.add_argument(
         "-path_to_conf",
