@@ -140,7 +140,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # - code: ?
         # DOUBTS: How are missing values handled and features scaled in other approaches?
 
-        # Assuming the diabetes dataset is stored in 'data/mammographic_masses.txt'
+        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.txt'
         file_path = "data/datasets/mammographic_masses.txt"
 
         df = pd.read_csv(file_path, sep=",")
@@ -155,7 +155,32 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y = y.reshape(-1, 1)
 
     elif dataset == "gestacional":
-        # Assuming the gestacional dataset is stored in 'data/gestacionaldiabetes.csv'
+        # DESCRIPTION:
+        # -------------------------
+        # Gestational diabetes is a type of high blood sugar that develops during pregnancy. It can occur at any stage
+        # of pregnancy and cause problems for both the mother and the baby, during and after birth. The risks can be
+        # reduced if they are early detected and managed, especially in areas where only periodic tests of pregnant
+        # women are available. The dataset was obtained from the Kurdistan region laboratories, which collected
+        # information from pregnant women with and without diabetes.
+        # -------------------------
+        # NUMBER OF INSTANCES: 1012
+        # NUMBER OF ATTRIBUTES:  6 plus class
+        #       1. Age (16-45)
+        #       2. Pregnancy No. (1-9)
+        #       3. Weight (43-126)
+        #       4. Height (135-196)
+        #       5. BMI (15 - 54.3)
+        #       6. Heredity (0-1)
+        #       7. Class variable: nodiabetes=0 or diabetes=1
+        # MISSING VALUES: No
+        # -------------------------
+        # KAGGLE: https://www.kaggle.com/datasets/rasooljader/gestational-diabetes/data
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: ?
+        # - code: ?
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
+        # Assuming the gestacional dataset is stored in 'data/dataset/gestacionaldiabetes.csv'
         file_path = "data/datasets/gestacionaldiabetes.csv"
 
         df = pd.read_csv(file_path, sep=",")
