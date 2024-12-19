@@ -99,7 +99,6 @@ class FNNModel:
             self.fitness = fitness_value
         
         return fitness_value
-        return fitness_value
     
     def mutate(self, mutation_rate=0.1):
         """
