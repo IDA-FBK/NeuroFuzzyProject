@@ -121,8 +121,8 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # NUMBER OF INSTANCES: 306
         # NUMBER OF ATTRIBUTES:  3 plus class
         #       1. Age: Age of patient at time of operation (integer)
-        #       2. Operation Year: Patient's year of operation (onteger)
-        #       3. Number of positive axillary nodes detected  (Integer)
+        #       2. Operation Year: Patient's year of operation (integer)
+        #       3. Number of positive axillary nodes detected  (integer)
         #       4. Class variable: Survival Status (1 = the patient survived 5 years or longer, 2 = the patient died within 5 year)
         # MISSING VALUES: No
         # -------------------------
@@ -258,8 +258,9 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # - code: ?
         # DOUBTS: How are missing values handled and features scaled in other approaches?
 
-        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.txt'
-        file_path = "data/datasets/mammographic_masses.txt"
+        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.data'
+        # TODO: manage missing values
+        file_path = "data/datasets/mammographic_masses.data"
 
         df = pd.read_csv(file_path, sep=",")
         x = df.iloc[:, :-1].values
