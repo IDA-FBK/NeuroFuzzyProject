@@ -79,26 +79,36 @@ def run_experiment(
                         
     """
     Run an experiment with the given configuration and save the results.
-
     Parameters:
-    - train_data (tuple): Tuple containing features and labels for the training set.
-    - test_data (tuple): Tuple containing features and labels for the testing set.
-    - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
-      is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
-    - pred_method (str): The prediction method to be used by the FNN model (e.g., argmax).
-    - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
-      to their original dataset class values.
-    - neuron_type (str): Type of neuron to use in the FNN model.
-    - num_mfs (int): Number of membership functions for each input dimension.
-    - activation (str): Activation function to use in the FNN model.
-    - optimizer (str): Optimizer algorithm to use for training the FNN model.
-    - i_seed (int): Seed for the experiment.
-    - rng_seed (int): Seed for random number generation in the FNN model.
-    - local_results (DataFrame): DataFrame to store the results of each experiment.
-    - path_to_results (str): Path to the directory where experiment results will be saved.
+        - train_data (tuple): Tuple containing features and labels for the training set.
+        - test_data (tuple): Tuple containing features and labels for the testing set.
+        - data_encoding (str): Specifies the data encoding method to be used. Example: 'no-encoding', 'one-hot-encoding'.
+        - pred_method (str): The prediction method to be used by the FNN model (e.g., argmax).
+        - fitness_function (str): The fitness function to use for evaluating the FNN model.
+        - mutation_rate (float): Strength of mutation.
+        - mutation_ind_rate (float): Probability of mutation of an individual.
+        - crossover_rate (float): Probability of crossover.
+        - max_gen (int): Maximum number of generations.
+        - max_patience (int): Maximum number of generations without improvement.
+        - mu (int): Number of individuals to select from the population.
+        - lambda_ (int): Number of individuals to generate.
+        - selection_strategy (str): Selection strategy to use.
+        - map_class_dict (dict): A dictionary that maps predicted class values to original dataset class values.
+        - neuron_type (str): Type of neuron to use in the FNN model.
+        - num_mfs (int): Number of membership functions for each input dimension.
+        - update_gene (str): Type of gene update strategy.
+        - activation (str): Activation function to use in the FNN model.
+        - optimizer (str): Optimizer algorithm to use for training the FNN model.
+        - i_seed (int): Seed for the experiment.
+        - rng_seed (int): Seed for random number generation in the FNN model.
+        - local_results (DataFrame): DataFrame to store the results of each experiment.
+        - path_to_results (str): Path to the directory where experiment results will be saved.
 
     Returns:
-    None
+        - result_train (float): The fitness value of the best individual on the training set.
+        - result_eval (float): The fitness value of the best individual on the evaluation set.
+        - result_test (float): The fitness value of the best individual on the testing set.
+        - local_results (DataFrame): DataFrame containing the results of the current experiment, each row is a new generation.
     """
 
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
