@@ -194,21 +194,10 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
         # TODO: If we use version with 303, we have to do class collapsing to 0, 1 (binary problem)
-        # Assuming the heart dataset is stored in 'data/dataset/heart.txt'
-        file_path = "data/datasets/heart.txt"
+        # Assuming the heart dataset is stored in 'data/dataset/processed_cleveland.data'
+        file_path = "data/dataset/processed_cleveland.data"
+        # TODO: implement new code here (see Issue#10)
 
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-            map_class_dict[0] = 1
-            map_class_dict[1] = 2
-        elif data_encoding == "no-encoding":
-            y[y == 2] = -1
-            map_class_dict[-1] = 2
-            y = y.reshape(-1, 1)
 
     elif dataset == "liver":
         # Assuming the diabetes dataset is stored in 'liver_data.txt'
@@ -262,16 +251,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # TODO: manage missing values
         file_path = "data/datasets/mammographic_masses.data"
 
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
+        # TODO: implement new code here (see Issue#11)
 
     elif dataset == "preeclampsia":
         # DESCRIPTION:
