@@ -323,29 +323,18 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # No recommendation, standard train-test split could be used. Can use three-way holdout split
         # (i.e., training, validation/development, testing) when doing model selection.
         # NOTE: there is validation cohort from South Korea used by Chicco and Jurman (2020) as an external validation
-        # cohort to confirm the generalizability of their proposed approach.
+        # cohort to confirm the generalizability of their proposed approach (We are going to compare with them).
         # -------------------------
         # UCI: https://archive.ics.uci.edu/dataset/827/sepsis+survival+minimal+clinical+records
         # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper: https://pubmed.ncbi.nlm.nih.gov/33051513/ (heck others?)
+        # - paper: https://pubmed.ncbi.nlm.nih.gov/33051513/ (check others?)
         # - code: ?
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the sepsis dataset is stored in 'data/dataset/sepsis.csv'
-        file_path = "data/datasets/sepsis.csv"
-
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-        elif data_encoding == "no-encoding":
-            y[y == 0] = -1
-            map_class_dict[-1] = 0
-            y = y.reshape(-1, 1)
-
+        # Assuming the sepsis dataset is stored in 'data/sepsis/'
+        # TODO: implement new code here (see Issue#12)
+        pass
     # Data normalization
     scaler = StandardScaler()
 
