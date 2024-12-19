@@ -1,5 +1,5 @@
 {
-  "num_seeds": 10,
+  "num_seeds": 1,
   "neuron_types": [
     "andneuron_prod-probsum",
     "orneuron_probsum-prod"
@@ -11,6 +11,6 @@
   ],
   "activation": "linear",
   "optimizer": "moore-penrose",
-  "data_encoding":"no-encoding",
-  "pred_method":"sign"
+  "data_encoding":"one-hot-encoding",
+  "pred_method": "argmax"
 }
