@@ -40,7 +40,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # 21 years old of Pima Indian heritage.
         # -------------------------
         # NUMBER OF INSTANCES: 768
-        # NUMBER OF ATTRIBUTES:  8 plus class (all numeric-valued)
+        # NUMBER OF ATTRIBUTES:  8 + class (all numeric-valued)
         #       1. Number of times pregnant
         #       2. Plasma glucose concentration a 2 hours in an oral glucose tolerance test
         #       3. Diastolic blood pressure (mm Hg)
@@ -82,7 +82,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # information from pregnant women with and without diabetes.
         # -------------------------
         # NUMBER OF INSTANCES: 1012
-        # NUMBER OF ATTRIBUTES:  6 plus class
+        # NUMBER OF ATTRIBUTES:  6 + class
         #       1. Age (16-45)
         #       2. Pregnancy No. (1-9)
         #       3. Weight (43-126)
@@ -98,7 +98,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # - code: ?
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the gestacional dataset is stored in 'data/dataset/gestacionaldiabetes.csv'
+        # Assuming the gestacional dataset is stored in 'data/dataset/gestational_diabetes.csv'
         file_path = "data/datasets/gestational_diabetes.csv"
 
         df = pd.read_csv(file_path, sep=",")
@@ -119,7 +119,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Chicago's Billings Hospital on the survival of patients who had undergone surgery for breast cancer.
         # -------------------------
         # NUMBER OF INSTANCES: 306
-        # NUMBER OF ATTRIBUTES:  3 plus class
+        # NUMBER OF ATTRIBUTES:  3 + class
         #       1. Age: Age of patient at time of operation (integer)
         #       2. Operation Year: Patient's year of operation (integer)
         #       3. Number of positive axillary nodes detected  (integer)
@@ -133,7 +133,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the haberman dataset is stored in 'data/haberman'
+        # Assuming the haberman dataset is stored in 'data/datasets/haberman.data'
         file_path = "data/datasets/haberman.data"
 
         df = pd.read_csv(file_path, sep=",")
@@ -162,7 +162,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # One file has been "processed", that one containing the Cleveland database.  All four unprocessed files also exist in this directory.
         # -------------------------
         # NUMBER OF INSTANCES: should be 303 but in Paulo's version is 270
-        # NUMBER OF ATTRIBUTES:  5 plus class
+        # NUMBER OF ATTRIBUTES:  5 + class
         #       1.  Age: age in years (integer)
         #       2.  Sex: (1 = male; 0 = female) (categorical)
         #       3.  Cp: (categorical)
@@ -200,21 +200,34 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
 
     elif dataset == "liver":
+        # DESCRIPTION:
+        # -------------------------
+        # The first 5 variables are all blood tests which are thought to be sensitive to liver disorders that might
+        # arise from excessive alcohol consumption. Each line in the dataset constitutes the record of a single male
+        # individual.
+        # -------------------------
+        # NUMBER OF INSTANCES: 345
+        # NUMBER OF ATTRIBUTES:  5 + drinks (target?) and selector
+        #       1. Mcv: mean corpuscular volume (continuos)
+        #       2. Alkphos: alkaline phosphotase (continuos)
+        #       3. Sgpt: alanine aminotransferase  (continuos)
+        #       4. Sgot: aspartate aminotransferas (continuos)
+        #       5. Gammagt: gamma-glutamyl transpeptidase (continuos)
+        #       6. Drinks: number of half-pint equivalents of alcoholic beverages drunk per day (continuos-target?)
+        #       7. Selector: field created by the BUPA researchers to split the data into train/test sets (categorical)
+        # MISSING VALUES: No
+        # -------------------------
+        # UCI: https://archive.ics.uci.edu/dataset/60/liver+disorders
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper: ?
+        # - code: ?
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+
         # Assuming the diabetes dataset is stored in 'liver_data.txt'
         file_path = "data/datasets/liver_data.txt"
 
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-            map_class_dict[0] = 1
-            map_class_dict[1] = 2
-        elif data_encoding == "no-encoding":
-            y[y == 2] = -1
-            map_class_dict[-1] = 2
-            y = y.reshape(-1, 1)
+        # TODO: See Issue#5
 
     elif dataset == "mammography":
         # DESCRIPTION:
@@ -226,7 +239,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Radiology of the University Erlangen-Nuremberg between 2003 and 2006
         # -------------------------
         # NUMBER OF INSTANCES: should be 961 but in Paulo's version is 830
-        # NUMBER OF ATTRIBUTES:  5 plus class
+        # NUMBER OF ATTRIBUTES:  5 + class
         #       1. BI-RADS assessment: 1 to 5 (ordinal, non-predictive!)
         #       2. Age: patient's age in years (integer)
         #       3. Shape: mass shape: round=1 oval=2 lobular=3 irregular=4 (nominal)
@@ -258,7 +271,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # -------------------------
         # -------------------------
         # NUMBER OF INSTANCES: 1640
-        # NUMBER OF ATTRIBUTES: paulo's version uses 6 plus class (but original one has more).
+        # NUMBER OF ATTRIBUTES: paulo's version uses 6 + class (but original one has more).
         # MISSING VALUES: No
         #
         # -------------------------
@@ -297,7 +310,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # medical features as possible is very important.
         # -------------------------
         # NUMBER OF INSTANCES: 110,204
-        # NUMBER OF ATTRIBUTES:  3 plus class
+        # NUMBER OF ATTRIBUTES:  3 + class
         #       1. Age: Age of the patient in years
         #       2. Sex of person (0: male, 1: female)
         #       3. Episode_number (Number of prior Sepsis episodes)
