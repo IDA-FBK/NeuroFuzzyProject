@@ -265,7 +265,39 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/datasets/mammographic_masses.data"
 
         # TODO: implement new code here (see Issue#11)
-
+    elif dataset == "maternal-hr":
+        # DESCRIPTION:
+        # -------------------------
+        # Data has been collected from different hospitals, community clinics, maternal health cares from the
+        # rural areas of Bangladesh through the IoT based risk monitoring system. Age, Systolic Blood Pressure as
+        # SystolicBP, Diastolic BP as DiastolicBP, Blood Sugar as BS, Body Temperature as BodyTemp, HeartRate and
+        # RiskLevel. All these are the responsible and significant risk factors for maternal mortality, that is one of
+        # the main concern of SDG of UN.
+        # -------------------------
+        # NUMBER OF INSTANCES: 1013
+        # NUMBER OF ATTRIBUTES: 6 + 3 classes
+        #       1. Age: any ages in years when a women during pregnant (integer)
+        #       2. SystolicBP: upper value of Blood Pressure in mmHg, another significant attribute during pregnancy (integer)
+        #       3. DiastolicBP: lower value of Blood Pressure in mmHg, another significant attribute during pregnancy (integer)
+        #       4. BS: Blood glucose levels is in terms of a molar concentration (integer)
+        #       5. BodyTemp: mass density high=1 iso=2 low=3 fat-containing=4 (integer)
+        #       6. HeartRate: A normal resting heart rate (integer)
+        #       7. RiskLevel: Predicted Risk Intensity Level during pregnancy considering the previous attribute
+        #                     (target, categorical: low, medium, and high)
+        # MISSING VALUES: No
+        #
+        # -------------------------
+        # AVAILABLE AT: https://archive.ics.uci.edu/dataset/863/maternal+health+risk
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper:
+        # - code: ?
+        # - scholar: https://scholar.google.com/scholar?cites=1019849447949783013&as_sdt=2005&sciodt=0,5&hl=en
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+        #
+        # Assuming the preclampsia dataset is stored in 'data/datasets/maternal_health_risk_data.csv'
+        # TODO: implement new code here (see Issue#13)
+        pass
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
