@@ -3,6 +3,7 @@ import os.path
 
 import numpy as np
 import pandas as pd
+import time
 
 from data.data import get_data
 from experiments.configurations.configurations import get_configuration
@@ -51,7 +52,7 @@ def run_experiment(
     Returns:
     None
     """
-
+    start_time = time.time()
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
@@ -97,7 +98,7 @@ def run_experiment(
     plot_class_confusion_matrix("TEST", evaluation_metrics_test["cm"], evaluation_metrics_test["unique_labels"],
                                 path_to_exp_results)
 
-
+    ending_time = time.time() - start_time
     # Append both train and test metrics to the DataFrame
     results_df.loc[len(results_df)] = [
         i_seed,
@@ -114,7 +115,8 @@ def run_experiment(
         evaluation_metrics_test["precision"],  # Testing Precision
         evaluation_metrics_test["specificity"],  # Testing Specificity
     ]
-
+    with open('time.txt', 'a') as file:
+        file.write(str(ending_time)+'\n')
     # TODO: evaluate interpretabilty is in stand-by
     #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
 
@@ -128,13 +130,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-path_to_conf",
         type=str,
-        default="./experiments/configurations/iris/conf-00.json",
+        default="./experiments/configurations/mammography/conf-01-standard.json",
         help="configuration file for the current experiment",
     )
     parser.add_argument(
         "-path_to_results",
         type=str,
-        default="./experiments/results/liver3/",
+        default="./experiments/results/mamm01-standard/",
         help="directory where to store the results",
     )
 
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     results_df = pd.DataFrame(
         columns=[
             "Seed", "NeuronType", "MFs", "Train_Acc.", "Train_F1", "Train_Rec.", "Train_Prec.",
-            "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec.",
+            "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec."
         ]
     )
 

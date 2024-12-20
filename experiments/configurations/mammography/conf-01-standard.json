@@ -6,13 +6,12 @@
   ],
   "num_mfs_options": [
     2,
-    3,
-    4
+    3
   ],
   "activation": "linear",
   "optimizer": "moore-penrose",
   "data_encoding":"one-hot-encoding",
   "pred_method": "argmax",
   "fitness_function": "accuracy",
-  "path_to_results": "mamm01/"
+  "path_to_results": "mamm01-standard/"
 }
