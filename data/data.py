@@ -98,7 +98,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # - code: ?
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the gestacional dataset is stored in 'data/dataset/gestational_diabetes.csv'
+        # Assuming the gestacional dataset is stored in 'data/datasets/gestational_diabetes.csv'
         file_path = "data/datasets/gestational_diabetes.csv"
 
         df = pd.read_csv(file_path, sep=",")
@@ -194,7 +194,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
         # TODO: If we use version with 303, we have to do class collapsing to 0, 1 (binary problem)
-        # Assuming the heart dataset is stored in 'data/dataset/processed_cleveland.data'
+        # Assuming the heart dataset is stored in 'data/datasets/processed_cleveland.data'
         file_path = "data/dataset/processed_cleveland.data"
         # TODO: implement new code here (see Issue#10)
 
@@ -224,7 +224,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the diabetes dataset is stored in 'liver_data.txt'
+        # Assuming the diabetes dataset is stored in 'data/datasets/liver_data.txt'
         file_path = "data/datasets/liver_data.txt"
 
         # TODO: See Issue#5
@@ -260,7 +260,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # - code: ?
         # DOUBTS: How are missing values handled and features scaled in other approaches?
 
-        # Assuming the diabetes dataset is stored in 'data/dataset/mammographic_masses.data'
+        # Assuming the diabetes dataset is stored in 'data/datasets/mammographic_masses.data'
         # TODO: manage missing values
         file_path = "data/datasets/mammographic_masses.data"
 
@@ -298,6 +298,51 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Assuming the preclampsia dataset is stored in 'data/datasets/maternal_health_risk_data.csv'
         # TODO: implement new code here (see Issue#13)
         pass
+    elif dataset == "obesity":
+        # DESCRIPTION:
+        # -------------------------
+        # This dataset include data for the estimation of obesity levels in individuals from the countries of Mexico,
+        # Peru and Colombia, based on their eating habits and physical condition. The data contains 17 attributes and
+        # 2111 records, the records are labeled with the class variable NObesity (Obesity Level), that allows
+        # classification of the data using the values of Insufficient Weight, Normal Weight, Overweight Level I,
+        # Overweight Level II, Obesity Type I, Obesity Type II and Obesity Type III. 77% of the data was generated
+        # synthetically using the Weka tool and the SMOTE filter, 23% of the data was collected directly from users
+        # through a web platform.
+        # -------------------------
+        # NUMBER OF INSTANCES: 2111
+        # NUMBER OF ATTRIBUTES: 16 + 7 classes
+        #       1. Gender (categorical)
+        #       2. Age (continuous)
+        #       3. Height (continuous)
+        #       4. Weight (continuous)
+        #       5. Family_history_with_overweight: Has a family member suffered or suffers from overweight? (binary)
+        #       6. FAVC: Do you eat high caloric food frequently? (binary)
+        #       7. FCVC: Do you usually eat vegetables in your meals? (integer)
+        #       8. NCP: How many main meals do you have daily? (continuos)
+        #       9. CAEC: Do you eat any food between meals? (categorical)
+        #       10. SMOKE: Do you smoke? (binary)
+        #       11. CH2O: How much water do you drink daily? (continuos)
+        #       12. SCC: Do you monitor the calories you eat daily? (binary)
+        #       13. FAF: How often do you have physical activity? (continuos)
+        #       14. TUE: How much time do you use technological devices such as cell phone, videogames, television, computer and others? (integer)
+        #       15. CALC:  How often do you drink alcohol? (categorical)
+        #       16. MTRANS: Which transportation do you usually use? (categorical)
+        #       17. TUE: Obesity level (target, categorical: low, high, medium)
+        #
+        # MISSING VALUES: No
+        #
+        # -------------------------
+        # AVAILABLE AT: https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition
+        # POSSIBLE COMPARISON (TO INVESTIGATE):
+        # - paper:
+        # - code: ?
+        # - scholar: https://scholar.google.com/scholar?cites=9313437639045820138&as_sdt=2005&sciodt=0,5&hl=en
+        #
+        # DOUBTS: Are features scaled in other approaches using this dataset?
+        #
+        # Assuming the obesity dataset is stored in 'data/datasets/obesity.csv'
+        # TODO: implement new code here (see Issue#14)
+        pass
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
@@ -314,7 +359,8 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
         #
-        # Assuming the preclampsia dataset is stored in 'data/dataset/preeclampsia.csv'
+        # Assuming the preclampsia dataset is stored in 'data/datasets/preeclampsia.csv'
+        # TODO: This is in stand-by
         file_path = "data/datasets/preeclampsia.csv"
 
         df = pd.read_csv(file_path, sep=",")
@@ -364,7 +410,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
 
-        # Assuming the sepsis dataset is stored in 'data/sepsis/'
+        # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
         pass
     # Data normalization
