@@ -208,21 +208,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y[y == 2] = -1
             map_class_dict[-1] = 2
             y = y.reshape(-1, 1)
-    elif dataset == "obesity":
-        file_path = "data/datasets/obesity.csv"
-        df = pd.read_csv(file_path, sep=",")
-        x = df.iloc[:, :-1].values
-        y = df.iloc[:, -1].values
-
-        if data_encoding == "one-hot-encoding":
-            y = get_one_encoding(y)
-            map_class_dict[0] = 1
-            map_class_dict[1] = 2
-        elif data_encoding == "no-encoding":
-            y[y == 2] = -1
-            map_class_dict[-1] = 2
-            y = y.reshape(-1, 1)
-
 
     # Data normalization
     scaler = StandardScaler()
