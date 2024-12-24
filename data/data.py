@@ -346,8 +346,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/datasets/obesity.csv"
         df = pd.read_csv(file_path, sep=",")
 
-        # Binary features - use label encoding
-        # Binary features (2 columns)
         binary_cols = ['Gender', 'family_history_with_overweight', 'SMOKE', 'SCC','FAVC']
         multi_cat_cols = ['CALC', 'MTRANS']
         ordinal_cols = ['CAEC']
@@ -356,10 +354,10 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         for col in all_cat_cols:
             df[col] = label_encoder.fit_transform(df[col])
         x_cat = df[all_cat_cols]
-        # Numerical features (8 columns)
+        
         numerical_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
-        x = df[numerical_cols].astype(np.float32)  # Use float32 instead of float64
-        ## Combine all features
+        x = df[numerical_cols].astype(np.float32)  
+        
         y = df.iloc[:, -1].values
         if data_encoding == "one-hot-encoding":
             y = get_one_encoding(y)
