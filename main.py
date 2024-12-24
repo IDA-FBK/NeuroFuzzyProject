@@ -125,18 +125,26 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "-dataset", type=str, default="liver", help="specify the dataset to use"
+        "-dataset", type=str, default="diabetes", help="specify the dataset to use"
     )
     parser.add_argument(
         "-path_to_conf",
         type=str,
+<<<<<<< HEAD
         default="./experiments/configurations/mammography/conf-01-standard.json",
+=======
+        default="./experiments/configurations/diabetes/conf-01.json",
+>>>>>>> main
         help="configuration file for the current experiment",
     )
     parser.add_argument(
         "-path_to_results",
         type=str,
+<<<<<<< HEAD
         default="./experiments/results/mamm01-standard/",
+=======
+        default="./experiments/results/diabetes/",
+>>>>>>> main
         help="directory where to store the results",
     )
 
