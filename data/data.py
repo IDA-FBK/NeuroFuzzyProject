@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd  # Import pandas to load and process the CSV file
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
 
 
 def get_one_encoding(labels):
@@ -29,7 +29,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
           to their original dataset class values.
     """
-
+    categorical_data = False
     map_class_dict = {}
     if dataset == "diabetes":
         # DESCRIPTION:
@@ -342,7 +342,33 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # Assuming the obesity dataset is stored in 'data/datasets/obesity.csv'
         # TODO: implement new code here (see Issue#14)
-        pass
+        categorical_data = True
+        file_path = "data/datasets/obesity.csv"
+        df = pd.read_csv(file_path, sep=",")
+
+        # Binary features - use label encoding
+        # Binary features (2 columns)
+        binary_cols = ['Gender', 'family_history_with_overweight', 'SMOKE', 'SCC','FAVC']
+        multi_cat_cols = ['CALC', 'MTRANS']
+        ordinal_cols = ['CAEC']
+        all_cat_cols = binary_cols + multi_cat_cols + ordinal_cols
+        label_encoder = LabelEncoder()
+        for col in all_cat_cols:
+            df[col] = label_encoder.fit_transform(df[col])
+        x_cat = df[all_cat_cols]
+        # Numerical features (8 columns)
+        numerical_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+        x = df[numerical_cols].astype(np.float32)  # Use float32 instead of float64
+        ## Combine all features
+        y = df.iloc[:, -1].values
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+            map_class_dict[0] = 1
+            map_class_dict[1] = 2
+        elif data_encoding == "no-encoding":
+            y[y == 2] = -1
+            map_class_dict[-1] = 2
+            y = y.reshape(-1, 1)
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
@@ -416,13 +442,20 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     # Data normalization
     scaler = StandardScaler()
 
-    x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=test_size, random_state=seed
-    )
-
+    if categorical_data:
+        x_train, x_test, x_cat_train, x_cat_test, y_train, y_test = train_test_split(
+        x, x_cat, y, test_size=test_size, random_state=seed)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=test_size, random_state=seed)
+    
     x_train_normalized = scaler.fit_transform(x_train)
     x_test_normalized = scaler.transform(x_test)
 
+    if(categorical_data):
+        x_train_normalized = np.hstack((x_train_normalized, x_cat_train))
+        x_test_normalized = np.hstack((x_test_normalized, x_cat_test))
+    
     data_train = (x_train_normalized, y_train)
     data_test = (x_test_normalized, y_test)
 
