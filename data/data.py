@@ -198,7 +198,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/dataset/processed_cleveland.data"
         # TODO: implement new code here (see Issue#10)
 
-
     elif dataset == "liver":
         # DESCRIPTION:
         # -------------------------
@@ -265,6 +264,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/datasets/mammographic_masses.data"
 
         # TODO: implement new code here (see Issue#11)
+
     elif dataset == "maternal-hr":
         # DESCRIPTION:
         # -------------------------
@@ -274,7 +274,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # RiskLevel. All these are the responsible and significant risk factors for maternal mortality, that is one of
         # the main concern of SDG of UN.
         # -------------------------
-        # NUMBER OF INSTANCES: 1013
+        # NUMBER OF INSTANCES: 1014
         # NUMBER OF ATTRIBUTES: 6 + 3 classes
         #       1. Age: any ages in years when a women during pregnant (integer)
         #       2. SystolicBP: upper value of Blood Pressure in mmHg, another significant attribute during pregnancy (integer)
@@ -288,16 +288,44 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # -------------------------
         # AVAILABLE AT: https://archive.ics.uci.edu/dataset/863/maternal+health+risk
+        # (also KAGGLE: https://www.kaggle.com/datasets/csafrit2/maternal-health-risk-data)
         # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper:
+        # - paper: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2023.1213436/full (check others?)
         # - code: ?
         # - scholar: https://scholar.google.com/scholar?cites=1019849447949783013&as_sdt=2005&sciodt=0,5&hl=en
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
-        #
-        # Assuming the preclampsia dataset is stored in 'data/datasets/maternal_health_risk_data.csv'
-        # TODO: implement new code here (see Issue#13)
-        pass
+        # Answer: In Togunwa et al. (2023) the StandardScaler was applied to scale the data (and we do the same as final step for all datasets).
+        
+        categorical_data = False
+
+        # Assuming the maternal health risk dataset is stored in 'data/datasets/maternal_health_risk_data_set.csv'
+        file_path = "data/datasets/maternal_health_risk_data_set.csv"
+        df = pd.read_csv(file_path, sep=",")
+
+        # Code the target (categorical) variables into numerical variables to facilitate computation,
+        # low-risk, mid-risk and high-risk classes are coded as 0, 1, and 2 respectively.
+        df['RiskLevel'] = df['RiskLevel'].map({'low risk': 0, 'mid risk': 1, 'high risk': 2})
+
+        # The heart rate variable had a minimum value of 7, which is not biologically plausible,
+        # consequently, two data instances with this outlier value are re-imputed with the mode value of 70.
+        df['HeartRate'] = df['HeartRate'].replace(7, 70)
+        
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            # Map the target classes to -1, 0, 1
+            y[y == 0] = -1
+            y[y == 1] = 0
+            y[y == 2] = 1
+            map_class_dict[-1] = 0
+            map_class_dict[0] = 1
+            map_class_dict[1] = 2
+            y = y.reshape(-1, 1)
+
     elif dataset == "obesity":
         # DESCRIPTION:
         # -------------------------
@@ -367,6 +395,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
             y[y == 2] = -1
             map_class_dict[-1] = 2
             y = y.reshape(-1, 1)
+
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
@@ -437,6 +466,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
         pass
+
     # Data normalization
     scaler = StandardScaler()
 
