@@ -1,10 +1,12 @@
 {
     "num_seeds": 1,
     "neuron_types": [
-        "andneuron_prod-probsum"
+        "andneuron_prod-probsum",
+        "orneuron_probsum-prod"
     ],
     "num_mfs_options": [
-        2
+        2,
+        3
     ],
     "update_genes": [
         "neuron_weights"
