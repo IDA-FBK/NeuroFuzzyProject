@@ -265,7 +265,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
         # TODO: implement new code here (see Issue#11)
 
-    elif dataset == "maternal-hr":
+    elif dataset == "maternal_hr":
         # DESCRIPTION:
         # -------------------------
         # Data has been collected from different hospitals, community clinics, maternal health cares from the
@@ -466,6 +466,9 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
         pass
+
+    else:
+        raise ValueError("Invalid dataset name.")
 
     # Data normalization
     scaler = StandardScaler()
