@@ -265,7 +265,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
         # TODO: implement new code here (see Issue#11)
 
-    elif dataset == "maternal_hr":
+    elif dataset == "maternal-hr":
         # DESCRIPTION:
         # -------------------------
         # Data has been collected from different hospitals, community clinics, maternal health cares from the
