@@ -389,11 +389,10 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         y = df.iloc[:, -1].values
         if data_encoding == "one-hot-encoding":
             y = get_one_encoding(y)
-            map_class_dict[0] = 1
-            map_class_dict[1] = 2
         elif data_encoding == "no-encoding":
-            y[y == 2] = -1
-            map_class_dict[-1] = 2
+            for i, label in enumerate(np.unique(y)):
+                y[y == label] = i
+                map_class_dict[i] = label
             y = y.reshape(-1, 1)
 
     elif dataset == "preeclampsia":
