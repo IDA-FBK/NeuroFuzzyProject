@@ -92,7 +92,11 @@ class FNNModel:
 
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
-        fitness_value = evaluation_metrics_train[fitness_type]
+        
+        if fitness_type == "sepsis_fitness":
+            fitness_value = evaluation_metrics_train["accuracy"] + evaluation_metrics_train["fscore"]*10
+        else:
+            fitness_value = evaluation_metrics_train[fitness_type]
         
         if update_fitness: # True only on the train set
             self.fitness = fitness_value
@@ -347,7 +351,7 @@ class FNNModel:
 
             # TODO: no-encoding + sign was related to the previous version (we may consider to remove it),
             # the 'official' and current version is  the ones with one hot encoding + argmax
-            if data_encoding == "no-encoding" and pred_method=="sign":
+            if data_encoding == "no-encoding" and pred_method== "sign":
                 y_pred = np.sign(output_v)
 
                 # show again original classes

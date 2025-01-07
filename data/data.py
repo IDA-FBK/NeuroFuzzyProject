@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd  # Import pandas to load and process the CSV file
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
+from imblearn.over_sampling import RandomOverSampler
+from collections import Counter
 
 
 def get_one_encoding(labels):
@@ -29,6 +31,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
           to their original dataset class values.
     """
+    sepsis = False  # Flag to indicate if the dataset is sepsis. In this case, we already have two datasets separated: one for training and another for testing.
     categorical_data = False
     map_class_dict = {}
     if dataset == "diabetes":
@@ -464,7 +467,44 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
         # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
-        pass
+        
+        sepsis = True #We already have two datasets separated: one for training and another for testing.
+        
+        filepath_primary_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_primary_cohort.csv"
+        filepath_validation_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_validation_cohort.csv"
+        
+        df_primary = pd.read_csv(filepath_primary_cohort, sep=",")
+        df_validation = pd.read_csv(filepath_validation_cohort, sep=",")
+        
+        
+        #Train data
+        x_train = df_primary.iloc[:, :-1].values
+        y_train = df_primary.iloc[:, -1].values
+        
+        print("Class distribution in the primary cohort: ", Counter(y_train))
+        
+        oversample = RandomOverSampler(sampling_strategy='minority') 
+        x_train, y_train = oversample.fit_resample(x_train, y_train)
+        print("Class distribution in the primary cohort: ", Counter(y_train))
+        exit(0)
+        
+        #Test data
+        x_test = df_validation.iloc[:, :-1].values
+        y_test = df_validation.iloc[:, -1].values
+        
+        
+        if data_encoding == "one-hot-encoding":
+            y_train = get_one_encoding(y_train)
+            y_test = get_one_encoding(y_test)
+            
+        elif data_encoding == "no-encoding":
+            y_train[y_train == 0] = -1
+            map_class_dict[-1] = 0
+            y_train = y_train.reshape(-1, 1)
+            
+            y_test[y_test == 0] = -1
+            y_test = y_test.reshape(-1, 1)
+            
 
     else:
         raise ValueError("Invalid dataset name.")
@@ -472,12 +512,13 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     # Data normalization
     scaler = StandardScaler()
 
-    if categorical_data:
-        x_train, x_test, x_cat_train, x_cat_test, y_train, y_test = train_test_split(
-        x, x_cat, y, test_size=test_size, random_state=seed)
-    else:
-        x_train, x_test, y_train, y_test = train_test_split(
-            x, y, test_size=test_size, random_state=seed)
+    if not sepsis: #If it is not sepsis, we have to split the data. Otherwise, we already have two datasets separated: one for training and another for testing.
+        if categorical_data:
+            x_train, x_test, x_cat_train, x_cat_test, y_train, y_test = train_test_split(
+            x, x_cat, y, test_size=test_size, random_state=seed)
+        else:
+            x_train, x_test, y_train, y_test = train_test_split(
+                x, y, test_size=test_size, random_state=seed)
     
     x_train_normalized = scaler.fit_transform(x_train)
     x_test_normalized = scaler.transform(x_test)
@@ -488,5 +529,5 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     
     data_train = (x_train_normalized, y_train)
     data_test = (x_test_normalized, y_test)
-
+    
     return data_train, data_test, map_class_dict

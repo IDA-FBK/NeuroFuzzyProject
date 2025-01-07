@@ -1,17 +1,16 @@
 {
-  "num_seeds": 5,
+  "num_seeds": 1,
   "neuron_types": [
     "andneuron_prod-probsum",
     "orneuron_probsum-prod"
   ],
   "num_mfs_options": [
-    2,
-    3,
-    4
+    2
   ],
   "activation": "linear",
   "optimizer": "moore-penrose",
   "data_encoding":"one-hot-encoding",
   "pred_method": "argmax",
-  "path_to_results": "/spesis_standard/"
+  "fitness_function": "fscore",
+  "path_to_results": "/spesis_standard_fast/"
 }

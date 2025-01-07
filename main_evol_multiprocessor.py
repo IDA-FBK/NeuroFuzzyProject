@@ -17,9 +17,84 @@ import copy
 import pandas as pd 
 import seaborn as sns
 import time
+from multiprocessing import Lock, Process, Queue, current_process
+import queue
 
-#(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
+
+
+def do_job(tasks_to_accomplish, data_train, data_test, data_encoding, pred_method, fitness_function, map_class_dict, activation, optimizer, filename_file, default_path_results, path_to_results, core_id):
+    print("Core ID: ", core_id)
+    global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "update_gene", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
+
+    while True:
+        try:
+            task = tasks_to_accomplish.get_nowait()
+
+            i_seed = task["seed"]
+            neuron_type = task["neuron_type"]
+            num_mfs = task["num_mfs"]
+            mut_rate = task["mut_rate"]
+            mut_ind_rate = task["mut_ind_rate"]
+            cross_rate = task["cross_rate"]
+            max_gen = task["max_gen"]
+            max_pat = task["max_pat"]
+            mu = task["mu"]
+            lamb = task["lambda"]
+            sel_str = task["sel_str"]
+            update_gene = task["update_gene"]
+
+            rng_seed = np.random.default_rng(i_seed)
+            local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
+            start_time = time.time()
+            
+
+            
+            result_train, result_eval, result_test, local_results = run_experiment(
+                data_train,
+                data_test,
+                data_encoding,
+                pred_method,
+                fitness_function,
+                mut_rate,
+                mut_ind_rate,
+                cross_rate,
+                max_gen, 
+                max_pat,
+                mu, 
+                lamb,
+                sel_str,
+                map_class_dict,
+                neuron_type,
+                num_mfs,
+                update_gene,
+                activation,
+                optimizer,
+                i_seed,
+                rng_seed,
+                local_results,
+                path_to_results
+            )
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+
+            os.makedirs(default_path_results, exist_ok=True)
+            local_results.to_csv(default_path_results + f"local_results_seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_updategene_{update_gene}_mutrate_{mut_rate}_mutindrate_{mut_ind_rate}_crossrate_{cross_rate}_maxgen_{max_gen}_maxpat_{max_pat}_mu_{mu}_lambda_{lamb}_selstr_{sel_str}.csv", index=False)
+
+            new_result = pd.DataFrame({"Seed": [i_seed], "NeuronType": [neuron_type], "MFs": [num_mfs], "update_gene": [update_gene], "mutation_rate": [mut_rate], "mutation_individual_rate": [mut_ind_rate], "crossover_rate": [cross_rate],  "max_generations": [max_gen], "max_patience": [max_pat], "mu": [mu], "lambda": [lamb], "selection_strategy": [sel_str], "Train_Acc.": [result_train["accuracy"]], "Dev_Acc.": [result_eval["accuracy"]], "Test_Acc.": [result_test["accuracy"]], "Train_F1": [result_train["fscore"]], "Dev_F1": [result_eval["fscore"]], "Test_F1": [result_test["fscore"]], "time": [elapsed_time]})
+            global_results = pd.concat([global_results, new_result], ignore_index=True)
+            global_results.to_csv(filename_file, index=False)
+
+        except queue.Empty:
+            print("DONE: " + str(core_id))    
+            break
     
+    return True
+
+
+
+
+
+
 def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed):
     population = []
     
@@ -29,6 +104,7 @@ def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_int
         population.append(individuo)
         
     return population
+
 
 
 def get_population_performance(fitness_population):
@@ -79,42 +155,33 @@ def run_experiment(
                         
     """
     Run an experiment with the given configuration and save the results.
+
     Parameters:
-        - train_data (tuple): Tuple containing features and labels for the training set.
-        - test_data (tuple): Tuple containing features and labels for the testing set.
-        - data_encoding (str): Specifies the data encoding method to be used. Example: 'no-encoding', 'one-hot-encoding'.
-        - pred_method (str): The prediction method to be used by the FNN model (e.g., argmax).
-        - fitness_function (str): The fitness function to use for evaluating the FNN model.
-        - mutation_rate (float): Strength of mutation.
-        - mutation_ind_rate (float): Probability of mutation of an individual.
-        - crossover_rate (float): Probability of crossover.
-        - max_gen (int): Maximum number of generations.
-        - max_patience (int): Maximum number of generations without improvement.
-        - mu (int): Number of individuals to select from the population.
-        - lambda_ (int): Number of individuals to generate.
-        - selection_strategy (str): Selection strategy to use.
-        - map_class_dict (dict): A dictionary that maps predicted class values to original dataset class values.
-        - neuron_type (str): Type of neuron to use in the FNN model.
-        - num_mfs (int): Number of membership functions for each input dimension.
-        - update_gene (str): Type of gene update strategy.
-        - activation (str): Activation function to use in the FNN model.
-        - optimizer (str): Optimizer algorithm to use for training the FNN model.
-        - i_seed (int): Seed for the experiment.
-        - rng_seed (int): Seed for random number generation in the FNN model.
-        - local_results (DataFrame): DataFrame to store the results of each experiment.
-        - path_to_results (str): Path to the directory where experiment results will be saved.
+    - train_data (tuple): Tuple containing features and labels for the training set.
+    - test_data (tuple): Tuple containing features and labels for the testing set.
+    - data_encoding (str) : Specifies the data encoding method to be used. This parameter affects how data
+      is processed within the model. Example: 'no-encoding', 'one-hot-encoding'.
+    - pred_method (str): The prediction method to be used by the FNN model (e.g., argmax).
+    - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
+      to their original dataset class values.
+    - neuron_type (str): Type of neuron to use in the FNN model.
+    - num_mfs (int): Number of membership functions for each input dimension.
+    - activation (str): Activation function to use in the FNN model.
+    - optimizer (str): Optimizer algorithm to use for training the FNN model.
+    - i_seed (int): Seed for the experiment.
+    - rng_seed (int): Seed for random number generation in the FNN model.
+    - local_results (DataFrame): DataFrame to store the results of each experiment.
+    - path_to_results (str): Path to the directory where experiment results will be saved.
 
     Returns:
-        - result_train (float): The fitness value of the best individual on the training set.
-        - result_eval (float): The fitness value of the best individual on the evaluation set.
-        - result_test (float): The fitness value of the best individual on the testing set.
-        - local_results (DataFrame): DataFrame containing the results of the current experiment, each row is a new generation.
+    None
     """
 
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
-    
+    path_to_exp_results = path_to_results + exp_str
+
     """ if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True) """
 
@@ -133,8 +200,7 @@ def run_experiment(
     (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
     
     
-    population = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
-                                       optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
+    population = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
     
     generation = 0
     best_fitness = 0
@@ -143,8 +209,9 @@ def run_experiment(
     patience = max_patience
     epoch_improoved = False
     #pbar = tqdm(range(1,max_generations))
-
+    
     for generation in range(max_gen):
+        print("Generation: ", generation)
         if patience == 0:
             break
         
@@ -168,7 +235,7 @@ def run_experiment(
             fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
             performance_test.append(fitness_test)
         
-            if fitness_eval > best_fitness: #Save the best individuo
+            if fitness_eval > best_fitness or best_guy is None: #Save the best individuo
                 best_fitness = fitness_eval
                 best_guy = copy.deepcopy(individuo)
                 epoch_improoved = True
@@ -187,7 +254,6 @@ def run_experiment(
         
         generation += 1
         
-        
         #Il best individuo è quello con la migliore performance sul validation set
         #print("best individuo (results on train set): ", best_guy.fitness)
         #print("best individuo (results on val set): ", best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False))
@@ -201,9 +267,10 @@ def run_experiment(
     #print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
     
     
-    result_train = best_guy.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
-    result_eval = best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
-    result_test = best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
+    
+    result_train = best_guy.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
+    result_eval = best_guy.evaluate_model(x_eval, y_eval, data_encoding, pred_method, map_class_dict)
+    result_test = best_guy.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
     
     return result_train, result_eval, result_test, local_results
 
@@ -216,7 +283,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-path_to_conf",
         type=str,
-        default="./experiments/configurations/mammography/conf-01-all-evo.json",
+        default="./experiments/configurations/mammography/conf-01_evo.json",
         help="configuration file for the current experiment",
     )
     parser.add_argument(
@@ -252,10 +319,48 @@ if __name__ == "__main__":
     mutation_individual_rate = conf["mutation_individual_rate"]
     default_path_results = path_to_results + conf["path_to_results"]
     update_genes = conf["update_genes"]
+    
+    print("Configuration loaded")
+    print("data_encoding: ", data_encoding) 
+    print("pred_method: ", pred_method)
+
 
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
+
+    # used for debugging
+    """ local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
     
-    global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "update_gene", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
+    i_seed = 1 #np.random.default_rng(num_seeds)
+    rng_seed = np.random.default_rng(i_seed)
+    result_train, result_eval, result_test, local_results = run_experiment(
+                    data_train,
+                    data_test,
+                    data_encoding,
+                    pred_method,
+                    fitness_function,
+                    mutation_rate=0.9,
+                    mutation_ind_rate=0.5,
+                    crossover_rate=0.5,
+                    max_gen = 20,
+                    max_patience= 1000,
+                    mu = 20, 
+                    lambda_ = 60,
+                    selection_strategy = "plus",
+                    map_class_dict = map_class_dict,
+                    neuron_type = "andneuron_prod-probsum",
+                    num_mfs = 2,
+                    activation = "linear",
+                    optimizer = "moore-penrose",
+                    i_seed = i_seed,
+                    rng_seed = rng_seed,
+                    local_results = local_results,
+                    path_to_results = "")
+    
+    local_results.to_csv("demo_results.csv")
+    exit(0) """
+    
+    global_results = pd.DataFrame(columns=["Seed", "NeuronType", "MFs", "mutation_rate", "mutation_individual_rate", "crossover_rate",  "max_generations", "max_patience", "mu", "lambda", "selection_strategy", "Train_Acc.", "Dev_Acc.", "Test_Acc.", "time"])
+
 
     # get the filename for the global results
     base_filename = "global_result_"
@@ -263,18 +368,22 @@ if __name__ == "__main__":
     new_file = False
     complete_filename = ""
     counter = 0
+    filename_no_extension = ""
     
     while not new_file: #Check if the file already exists, if so, generate a new filename
         id = str(counter)
         complete_filename = base_filename + id + extension
+        filename_no_extension = base_filename + id
         
         if not os.path.exists(f"{default_path_results}{complete_filename}"):
             new_file = True
             
         counter+=1
-        
+
+    tasks_pending = Queue()
+    tasks_done = Queue()
+
     for i_seed in range(num_seeds):
-        rng_seed = np.random.default_rng(i_seed)
         for neuron_type in neuron_types:
             for num_mfs in num_mfs_options:
                 for update_gene in update_genes:
@@ -291,42 +400,23 @@ if __name__ == "__main__":
                                                     continue
                                                 for sel_str in selection_strategies:
                                                     
-                                                    local_results = pd.DataFrame(columns=["Epoch", "Train_max_fitness", "Train_min_fitness", "Train_avg_fitness", "Train_std_fitness", "Dev_max_fitness", "Dev_min_fitness", "Dev_avg_fitness", "Dev_std_fitness", "Test_max_fitness", "Test_min_fitness", "Test_avg_fitness", "Test_std_fitness"])
-                                                    
-                                                    start_time = time.time()
-                                                    result_train, result_eval, result_test, local_results = run_experiment(
-                                                        data_train,
-                                                        data_test,
-                                                        data_encoding,
-                                                        pred_method,
-                                                        fitness_function,
-                                                        mut_rate,
-                                                        mut_ind_rate,
-                                                        cross_rate,
-                                                        max_gen, 
-                                                        max_pat,
-                                                        mu, 
-                                                        lamb,
-                                                        sel_str,
-                                                        map_class_dict,
-                                                        neuron_type,
-                                                        num_mfs,
-                                                        update_gene,
-                                                        activation,
-                                                        optimizer,
-                                                        i_seed,
-                                                        rng_seed,
-                                                        local_results,
-                                                        path_to_results
-                                                    )
-                                                    end_time = time.time()
-                                                    elapsed_time = end_time - start_time
-                                                    
-                                                    os.makedirs(default_path_results, exist_ok=True)
-                                                    local_results.to_csv(default_path_results + f"local_results_seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_mutrate_{mut_rate}_mutindrate_{mut_ind_rate}_crossrate_{cross_rate}_maxgen_{max_gen}_maxpat_{max_pat}_mu_{mu}_lambda_{lamb}_selstr_{sel_str}.csv")
-                                                    
-                                                    
-                                                    new_result = pd.DataFrame({"Seed": [i_seed], "NeuronType": [neuron_type], "MFs": [num_mfs], "mutation_rate": [mut_rate], "mutation_individual_rate": [mut_ind_rate], "crossover_rate": [cross_rate],  "max_generations": [max_gen], "max_patience": [max_pat], "mu": [mu], "lambda": [lamb], "selection_strategy": [sel_str], "Train_Acc.": [result_train], "Dev_Acc.": [result_eval], "Test_Acc.": [result_test], "time": [elapsed_time]})
-                                                    global_results = pd.concat([global_results, new_result], ignore_index=True)
-                                    
-                                    global_results.to_csv(default_path_results + complete_filename, index=False)
+                                                    parametri = {"seed": i_seed, "neuron_type": neuron_type, "num_mfs": num_mfs, "update_gene":update_gene, "mut_rate": mut_rate, "mut_ind_rate": mut_ind_rate, "cross_rate": cross_rate, "max_gen": max_gen, "max_pat": max_pat, "mu": mu, "lambda": lamb, "sel_str": sel_str}
+                                                    tasks_pending.put(parametri)
+
+    #get the number of processors
+    num_processors = os.cpu_count()
+    print("Number of processors: ", num_processors)
+
+    #create a process
+    processes = []
+    for core_id in range(num_processors):
+        filename_file = f"{default_path_results}{filename_no_extension}_{core_id}{extension}" 
+        process = Process(target=do_job, args=(tasks_pending, data_train, data_test, data_encoding, pred_method, fitness_function, map_class_dict, activation, optimizer, filename_file, default_path_results, path_to_results, core_id))
+        processes.append(process)
+        process.start()
+
+    
+    for process in processes:
+        process.join()
+
+
