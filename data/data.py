@@ -481,12 +481,9 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         x_train = df_primary.iloc[:, :-1].values
         y_train = df_primary.iloc[:, -1].values
         
-        print("Class distribution in the primary cohort: ", Counter(y_train))
         
         oversample = RandomOverSampler(sampling_strategy='minority') 
         x_train, y_train = oversample.fit_resample(x_train, y_train)
-        print("Class distribution in the primary cohort: ", Counter(y_train))
-        exit(0)
         
         #Test data
         x_test = df_validation.iloc[:, :-1].values
