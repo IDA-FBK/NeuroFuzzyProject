@@ -21,7 +21,7 @@ from sklearn.model_selection import train_test_split
 from collections import Counter
 
 #(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
-    
+
 def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed):
     population = []
     
