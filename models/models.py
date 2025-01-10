@@ -93,10 +93,7 @@ class FNNModel:
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
         
-        if fitness_type == "sepsis_fitness":
-            fitness_value = evaluation_metrics_train["accuracy"] + evaluation_metrics_train["fscore"]*10
-        else:
-            fitness_value = evaluation_metrics_train[fitness_type]
+        fitness_value = evaluation_metrics_train[fitness_type]
         
         if update_fitness: # True only on the train set
             self.fitness = fitness_value

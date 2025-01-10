@@ -13,6 +13,7 @@ from experiments.utils import save_list_in_a_file
 from experiments.plots import plot_class_confusion_matrix
 from models.models import FNNModel
 from models.selection import selection
+from sklearn.model_selection import train_test_split
 import copy
 import pandas as pd 
 import seaborn as sns
@@ -118,11 +119,7 @@ def get_population_performance(fitness_population):
 
 def get_train_eval_split(data, percentage_train=0.8): #Potremmo usare sklearn.model_selection.train_test_split; ma dobbiamo aggiungere la libreria
     x_data, y_data = data[0], data[1]
-    
-    indice_split = int(percentage_train*len(x_data))
-    
-    x_train, x_eval = x_data[:indice_split], x_data[indice_split:]
-    y_train, y_eval = y_data[:indice_split], y_data[indice_split:]    
+    x_train, x_eval, y_train, y_eval = train_test_split(x_data, y_data, train_size=percentage_train, random_state=0, stratify=y_data)
     
     return (x_train, y_train), (x_eval, y_eval)
 

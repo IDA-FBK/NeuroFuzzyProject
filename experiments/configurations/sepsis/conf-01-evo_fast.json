@@ -14,7 +14,7 @@
     "optimizer": "moore-penrose",
     "data_encoding":"one-hot-encoding",
     "pred_method": "argmax",
-    "fitness_function": "sepsis_fitness",
+    "fitness_function": "fscore",
     "mutation_rate": [0.2, 0.5, 0.8], 
     "mutation_individual_rate": [0.2], 
     "crossover_rate": [0.2], 
@@ -23,5 +23,5 @@
     "mu": [5],
     "lambda_": [5],
     "selection_strategies": ["plus"],
-    "path_to_results": "/spesis_evo_fast_custom_fitness/"
+    "path_to_results": "/spesis_evo_fast_fscore/"
 } 
