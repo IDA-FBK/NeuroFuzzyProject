@@ -337,7 +337,6 @@ class FNNModel:
             evaluation_metrics (dict): Dictionary containing evaluation metrics including accuracy, specificity,
             precision, recall, and F-score.
         """
-        print("Fast evaluation: ", fast)
         if(fast):
             entries_considered = min(100, int(0.1 * x_test.shape[0]))
             #randomly select entries
