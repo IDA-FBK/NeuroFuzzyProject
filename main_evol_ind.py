@@ -19,6 +19,7 @@ import seaborn as sns
 import time
 from sklearn.model_selection import train_test_split
 from collections import Counter
+from typing import List # Add at top of file
 
 #(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
 
@@ -131,7 +132,7 @@ def run_experiment(
     (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
     
     
-    population = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
+    population:List[FNNModel] = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
                                        optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
     
     generation = 0

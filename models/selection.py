@@ -1,9 +1,11 @@
 import random
 from models.crossover import *
+from typing import List # Add at top of file
+from models.models import FNNModel
 
 
 def selection(
-        population,
+        population: List[FNNModel],
         selection_mu,
         selection_lambda,
         mutation_rate,
@@ -37,14 +39,14 @@ def selection(
     # Calculate fitness of population
     for individual in population:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
+            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict,fast=True)
 
-    offspring = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, rng_seed, method=method, tournament_size=tournament_size)
+    offspring:List[FNNModel] = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, rng_seed, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
     for individual in offspring:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict)
+            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict,fast=True)
     
     # Select the best individuals according to the selection strategy
     if selection_strategy == "plus":

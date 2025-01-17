@@ -90,13 +90,12 @@ class FNNModel:
             self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
 
 
-    def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True):
-        evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict)
+    def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True, fast = False):
+        evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict,fast=fast)
         
         fitness_value = evaluation_metrics_train[fitness_type]
         
         if update_fitness: # True only on the train set
-            self.fitness = fitness_value
             self.fitness = fitness_value
         
         return fitness_value
@@ -320,7 +319,7 @@ class FNNModel:
         )
         self.model.fit(x, y, epochs=3, batch_size=1)
 
-    def evaluate_model(self, x_test, y_test, data_encoding, pred_method, map_class_dict):
+    def evaluate_model(self, x_test, y_test, data_encoding, pred_method, map_class_dict, fast = False):
         """
         Evaluate the trained FNN model using test data.
 
@@ -338,7 +337,15 @@ class FNNModel:
             evaluation_metrics (dict): Dictionary containing evaluation metrics including accuracy, specificity,
             precision, recall, and F-score.
         """
+        print("Fast evaluation: ", fast)
+        if(fast):
+            entries_considered = min(100, int(0.1 * x_test.shape[0]))
+            #randomly select entries
+            indices = self.rng_seed.choice(x_test.shape[0], entries_considered, replace=False)
+            x_test = x_test[indices]
+            y_test = y_test[indices]
         # Evaluate the trained FNN model
+
         evaluation_metrics = {}
         fuzzy_outputs_test = self.fuzzification_layer(x_test)
         logic_outputs_test = self.logic_neurons_layer(fuzzy_outputs_test)

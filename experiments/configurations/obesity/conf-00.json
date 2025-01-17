@@ -5,14 +5,11 @@
         "orneuron_probsum-prod"
     ],
     "num_mfs_options": [
-        2,
-        3
+        2
     ],
     "update_genes": [
         "V",
-        "neuron_weights",
-        "mf_params",
-        "all"
+        "neuron_weights"
     ],
     "activation": "linear",
     "optimizer": "moore-penrose",
