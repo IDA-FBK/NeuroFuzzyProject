@@ -14,18 +14,18 @@ def crossover(parent1, parent2, rng_seed, crossover_rate=0.5):
     local_parent_2 = copy_individual(parent2) #Altrimenti condivide lo stesso indirizzo di memoria da qui in avanti
 
     # Swap neuron weights
-    if child.update_gene == "all" or child.update_gene == "neuron_weights":
+    if child.update_gene == "neuron_weights":
         for i in range(len(child.neuron_weights)):
             if rng_seed.random() < crossover_rate:
                 child.neuron_weights[i] = local_parent_2.neuron_weights[i]
 
     # Swap last layer weights
-    if child.update_gene == "all" or child.update_gene == "V":
+    if child.update_gene == "V":
         if rng_seed.random() < crossover_rate:
             child.V = local_parent_2.V
         
     # Swap gaussian parameters
-    if child.update_gene == "all" or child.update_gene == "mf_params":
+    if child.update_gene == "mf_params":
         for feature_index in range(len(child.mf_params)):
             if SWAP4ALL_MFS:
                 if rng_seed.random() < crossover_rate:

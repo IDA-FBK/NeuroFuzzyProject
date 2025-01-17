@@ -41,7 +41,7 @@ def selection(
         if individual.fitness is None:
             individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict, fast=True)
 
-    offspring:List[FNNModel] = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, rng_seed, method=method, tournament_size=tournament_size)
+    offspring:List[FNNModel] = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, x, y, rng_seed, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
     for individual in offspring:
@@ -66,7 +66,7 @@ def tournament(population, rng_seed, tournament_size):
     return max(subset, key=lambda x: x.fitness)
 
 
-def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate, rng_seed, method="tournament", tournament_size=3):
+def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate, x, y, rng_seed, method="tournament", tournament_size=3):
     """
     Generate new individuals from the parents, with probability of parent selection proportional to fitness.
     parents: list of Individual
@@ -91,6 +91,6 @@ def generate_offspring(parents, selection_lambda, mutation_rate, crossover_rate,
             parent1 = rng_seed.choices(parents, weights=parent_probabilities)[0]
             parent2 = rng_seed.choices(parents, weights=parent_probabilities)[0]
         child = crossover(parent1, parent2, rng_seed, crossover_rate )
-        child.mutate(mutation_rate=mutation_rate)
+        child.mutate(x_train=x, y_train=y, mutation_rate=mutation_rate)
         offspring.append(child)
     return offspring
