@@ -73,21 +73,25 @@ class FNNModel:
         self.mutation_ind_rate = mutation_ind_rate # Probability for the individual to mutate 
         self.update_gene = update_gene
         
-    def initialize_individual(self, x_train):
+    def initialize_individual(self, x_train, y_train):
         fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
         logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
         
         if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
             raise ValueError("Invalid data encoding method")
         
-        if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
-            raise ValueError("Invalid data encoding method")
+        if self.optimizer not in ["moore-penrose"]:
+            raise ValueError("Invalid optimizer method")
         
-        # Random initialization of V
+        """# Random initialization of V
         if self.data_encoding == "one-hot-encoding":
             self.V = self.rng_seed.random((logic_outputs.shape[1], 2))
         elif self.data_encoding == "no-encoding":
-            self.V = self.rng_seed.random((logic_outputs.shape[1], 1))
+            self.V = self.rng_seed.random((logic_outputs.shape[1], 1))"""
+        
+        #Initialization of V
+        if self.optimizer == "moore-penrose":
+            self.V = np.dot(pinv(logic_outputs), y_train)
 
 
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True, fast = False):
@@ -110,20 +114,30 @@ class FNNModel:
         Returns:
             None
         """
-        if np.random.rand() < self.mutation_ind_rate:
-            if self.update_gene == "all" or self.update_gene == "V":
+        random_number = self.rng_seed.uniform()
+        
+        if random_number < self.mutation_ind_rate:
+            if self.update_gene == "V":
                 self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
 
-            elif self.update_gene == "all" or self.update_gene == "neuron_weights":
+            elif self.update_gene == "neuron_weights":
                 self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
 
-            elif self.update_gene == "all" or self.update_gene == "mf_params":
+                #The weights should be between 0 and 1:
+                self.neuron_weights[self.neuron_weights < 0] = 0
+                self.neuron_weights[self.neuron_weights > 1] = 1
+
+            elif self.update_gene == "mf_params":
                 for feature_index in range(len(self.mf_params)):
                     for mf_index in range(self.num_mfs):
                         self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
                         self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
                         if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
                             self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
+            
+            else:
+                raise ValueError("Invalid update_gene method")
+
 
         # Reset fitness
         self.fitness = None
@@ -343,6 +357,8 @@ class FNNModel:
             indices = self.rng_seed.choice(x_test.shape[0], entries_considered, replace=False)
             x_test = x_test[indices]
             y_test = y_test[indices]
+
+            #print(f"Fast evaluation: Only {len(x_test)} entries are considered for evaluation")
         # Evaluate the trained FNN model
 
         evaluation_metrics = {}

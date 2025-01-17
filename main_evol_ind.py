@@ -23,12 +23,12 @@ from typing import List # Add at top of file
 
 #(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, rng_seed)
 
-def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed):
+def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed):
     population = []
     
     for _ in range(pop_size):
         individuo = FNNModel(num_mfs=num_mfs, update_gene=update_gene, neuron_type=neuron_type, interpretation=fuzzy_interpretation, activation=activation, optimizer=optimizer, visualizeMF=False, mutation_ind_rate=mutation_ind_rate, data_encoding=data_encoding, rng_seed=rng_seed)
-        individuo.initialize_individual(x_train)
+        individuo.initialize_individual(x_train, y_train)
         population.append(individuo)
         
     return population
@@ -133,7 +133,7 @@ def run_experiment(
     
     
     population:List[FNNModel] = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
-                                       optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
+                                       optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed)
     
     generation = 0
     best_fitness = 0
