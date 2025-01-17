@@ -7,7 +7,7 @@
         2
     ],
     "update_genes": [
-        "neuron_weights"
+        "V"
     ],
     "activation": "linear",
     "optimizer": "moore-penrose",
@@ -17,8 +17,8 @@
     "mutation_rate": [0.05], 
     "mutation_individual_rate": [0.5], 
     "crossover_rate": [0.5], 
-    "max_generations": [100],
-    "max_patience": [20],
+    "max_generations": [2],
+    "max_patience": [2],
     "mu": [100],
     "lambda_": [150],
     "selection_strategies": ["plus"],

@@ -23,8 +23,9 @@ def crossover(parent1, parent2, rng_seed, crossover_rate=0.5):
     if child.update_gene == "V":
         if rng_seed.random() < crossover_rate:
             child.V = local_parent_2.V
-        
+    
     # Swap gaussian parameters
+    """
     if child.update_gene == "mf_params":
         for feature_index in range(len(child.mf_params)):
             if SWAP4ALL_MFS:
@@ -35,6 +36,8 @@ def crossover(parent1, parent2, rng_seed, crossover_rate=0.5):
                     if rng_seed.random() < crossover_rate:
                         child.mf_params[feature_index]["centers"][mf_index] = local_parent_2.mf_params[feature_index]["centers"][mf_index]
                         child.mf_params[feature_index]["sigmas"][mf_index] = local_parent_2.mf_params[feature_index]["sigmas"][mf_index]
+    """
+    
     return child
 
 

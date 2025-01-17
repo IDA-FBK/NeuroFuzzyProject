@@ -72,13 +72,13 @@ class FNNModel:
         self.fitness = None
         self.mutation_ind_rate = mutation_ind_rate # Probability for the individual to mutate 
         self.update_gene = update_gene
-
+        
         self.fuzzy_outputs = None
         
     def initialize_individual(self, x_train, y_train):
         fuzzy_outputs = self.fuzzification_layer(x_train)
-        logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
         self.fuzzy_outputs = copy.deepcopy(fuzzy_outputs)
+        logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
 
         if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
             raise ValueError("Invalid data encoding method")
@@ -88,8 +88,6 @@ class FNNModel:
         
         if self.optimizer == "moore-penrose":
             self.V = np.dot(pinv(logic_outputs), y_train)
-
-
 
     def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True, fast = False):
         evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict,fast=fast)
@@ -101,7 +99,15 @@ class FNNModel:
         
         return fitness_value
     
-    def mutate(self, x_train, y_train, mutation_rate=0.1):
+    def generate_parameters(self, x_train, y_train):
+        if self.update_gene != "V":
+            #fuzzy_outputs = self.fuzzification_layer(x_train)
+            logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
+            self.V = np.dot(pinv(logic_outputs), y_train)
+        
+        self.fitness = None #Devi rimuovere il fitness perche' cambiano i parametri
+    
+    def mutate(self, mutation_rate=0.1):
         """
         Mutate the individual (V) by adding random noise to the weights.
 
@@ -126,22 +132,13 @@ class FNNModel:
                 self.neuron_weights[self.neuron_weights < 0] = 0
                 self.neuron_weights[self.neuron_weights > 1] = 1
 
-                logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
-                self.V = np.dot(pinv(logic_outputs), y_train)
-
-            elif self.update_gene == "mf_params":
-                for feature_index in range(len(self.mf_params)):
-                    for mf_index in range(self.num_mfs):
-                        self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-                        self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
-                        if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
-                            self.mf_params[feature_index]["sigmas"][mf_index] = 0.1
-                
-                #Need to recalculate the fuzzy outputs
-                fuzzy_outputs = self.fuzzification_layer(x_train)  # Capture the fuzzy outputs
-                self.fuzzy_outputs = copy.deepcopy(fuzzy_outputs)
-                logic_outputs = self.logic_neurons_layer(fuzzy_outputs)  # Pass the fuzzy outputs to the logic neurons layer
-                self.V = np.dot(pinv(logic_outputs), y_train)
+                """elif self.update_gene == "mf_params":
+                    for feature_index in range(len(self.mf_params)):
+                        for mf_index in range(self.num_mfs):
+                            self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                            self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                            if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
+                                self.mf_params[feature_index]["sigmas"][mf_index] = 0.1"""
 
             else:
                 raise ValueError("Invalid update_gene method")
