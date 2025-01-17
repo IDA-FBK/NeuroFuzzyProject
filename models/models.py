@@ -126,7 +126,6 @@ class FNNModel:
                 self.neuron_weights[self.neuron_weights < 0] = 0
                 self.neuron_weights[self.neuron_weights > 1] = 1
 
-                self.calculate_V(x_train, y_train)
                 logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
                 self.V = np.dot(pinv(logic_outputs), y_train)
 
