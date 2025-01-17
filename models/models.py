@@ -115,8 +115,10 @@ class FNNModel:
             None
         """
         random_number = self.rng_seed.uniform()
-        
         if random_number < self.mutation_ind_rate:
+            # Reset fitness
+            self.fitness = None
+            
             if self.update_gene == "V":
                 self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
 
@@ -139,9 +141,6 @@ class FNNModel:
                 raise ValueError("Invalid update_gene method")
 
 
-        # Reset fitness
-        self.fitness = None
-        
 
     def fuzzification_layer(self, x):
         """
