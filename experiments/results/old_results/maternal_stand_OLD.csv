@@ -1,0 +1,5 @@
+Seed,NeuronType,MFs,Train_Acc.,Test_Acc.,Train_F1,Test_F1,time
+0,andneuron_prod-probsum,3,0.941,0.718,0.942,0.714,19.689120531082157
+0,orneuron_probsum-prod,2,0.75,0.692,0.748,0.685,1.904792308807373
+0,andneuron_prod-probsum,2,0.74,0.685,0.737,0.676,2.264242172241211
+0,orneuron_probsum-prod,3,0.942,0.682,0.943,0.677,14.4518141746521
