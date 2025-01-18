@@ -39,14 +39,14 @@ def selection(
     # Calculate fitness of population
     for individual in population:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict, fast=True)
+            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict,fast=True)[fitness_type]
 
     offspring:List[FNNModel] = generate_offspring(population, selection_lambda, mutation_rate, crossover_rate, rng_seed, method=method, tournament_size=tournament_size)
     
     # Calculate fitness of offspring
     for individual in offspring:
         individual.generate_parameters(x, y)
-        individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict, fast=True)
+        individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict, fast=True)[fitness_type]
 
     # Select the best individuals according to the selection strategy
     if selection_strategy == "plus":

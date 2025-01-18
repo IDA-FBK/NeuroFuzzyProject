@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from data.data import get_data
 from experiments.configurations.configurations import get_configuration
@@ -113,7 +113,7 @@ def run_experiment(
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
-    
+    cm_name = f"seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}"
     """ if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True) """
 
@@ -143,7 +143,7 @@ def run_experiment(
     epoch_improoved = False
     #pbar = tqdm(range(1,max_generations))
 
-    for generation in range(max_gen):
+    for generation in tqdm(range(max_gen),desc="Generations",position=0):
         if patience == 0:
             break
         
@@ -161,10 +161,10 @@ def run_experiment(
             fitness_train = individuo.fitness
             performance_train.append(fitness_train)
             
-            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             performance_eval.append(fitness_eval)
             
-            fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             performance_test.append(fitness_test)
         
             if fitness_eval > best_fitness: #Save the best individuo
@@ -200,11 +200,23 @@ def run_experiment(
     #print("Best individuo test set: ", best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False))
     
     
-    result_train = best_guy.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
-    result_eval = best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
-    result_test = best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
+    metrics_train = best_guy.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
+    metrics_eval = best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+    metrics_test = best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
     
-    return result_train, result_eval, result_test, local_results
+    fitness_train = metrics_train[fitness_function]
+    fitness_eval = metrics_eval[fitness_function]
+    fitness_test = metrics_test[fitness_function]
+
+    cm_train = metrics_train["cm"]
+    cm_test = metrics_test["cm"]
+    cm_eval = metrics_eval["cm"]
+
+    plot_class_confusion_matrix(split=f"{cm_name}_TRAIN", cm = cm_train, labels= metrics_train['unique_labels'], path_to_exp_results=path_to_results)
+    plot_class_confusion_matrix(split=f"{cm_name}_TEST", cm = cm_test, labels= metrics_test['unique_labels'], path_to_exp_results=path_to_results)
+    plot_class_confusion_matrix(split=f"{cm_name}_EVAL", cm = cm_eval, labels= metrics_eval['unique_labels'], path_to_exp_results=path_to_results)
+
+    return fitness_train, fitness_eval, fitness_test, local_results
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

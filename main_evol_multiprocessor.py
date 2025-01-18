@@ -178,6 +178,7 @@ def run_experiment(
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
     path_to_exp_results = path_to_results + exp_str
+    cm_name = f"seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}"
 
     """ if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True) """
@@ -226,10 +227,10 @@ def run_experiment(
             fitness_train = individuo.fitness
             performance_train.append(fitness_train)
             
-            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             performance_eval.append(fitness_eval)
             
-            fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
+            fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             performance_test.append(fitness_test)
         
             if fitness_eval > best_fitness or best_guy is None: #Save the best individuo
@@ -268,6 +269,15 @@ def run_experiment(
     result_train = best_guy.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
     result_eval = best_guy.evaluate_model(x_eval, y_eval, data_encoding, pred_method, map_class_dict)
     result_test = best_guy.evaluate_model(x_test, y_test, data_encoding, pred_method, map_class_dict)
+
+    cm_train = result_train["cm"]
+    cm_test = result_test["cm"]
+    cm_eval = result_eval["cm"]
+
+    plot_class_confusion_matrix(split=f"{cm_name}_TRAIN", cm = cm_train, labels= result_train['unique_labels'], path_to_exp_results=path_to_results)
+    plot_class_confusion_matrix(split=f"{cm_name}_TEST", cm = cm_test, labels= result_test['unique_labels'], path_to_exp_results=path_to_results)
+    plot_class_confusion_matrix(split=f"{cm_name}_EVAL", cm = cm_eval, labels= result_eval['unique_labels'], path_to_exp_results=path_to_results)
+
     
     return result_train, result_eval, result_test, local_results
 

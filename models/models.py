@@ -97,7 +97,7 @@ class FNNModel:
         if update_fitness: # True only on the train set
             self.fitness = fitness_value
         
-        return fitness_value
+        return evaluation_metrics_train
     
     def generate_parameters(self, x_train, y_train):
         if self.update_gene != "V":
