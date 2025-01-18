@@ -9,20 +9,20 @@
         3
     ],
     "update_genes": [
-        "neuron_weights"
+        "all"
     ],
     "activation": "linear",
     "optimizer": "moore-penrose",
     "data_encoding":"one-hot-encoding",
     "pred_method": "argmax",
     "fitness_function": "accuracy",
-    "mutation_rate": [0.05], 
-    "mutation_individual_rate": [0.5], 
-    "crossover_rate": [0.5], 
-    "max_generations": [20],
+    "mutation_rate": [0.2, 0.5, 0.8], 
+    "mutation_individual_rate": [0.2, 0.5, 0.8], 
+    "crossover_rate": [0.2, 0.5, 0.8], 
+    "max_generations": [80],
     "max_patience": [20],
-    "mu": [10],
-    "lambda_": [15],
+    "mu": [50],
+    "lambda_": [70],
     "selection_strategies": ["plus"],
     "path_to_results": "maternal_hr/"
 } 
