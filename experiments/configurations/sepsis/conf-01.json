@@ -13,5 +13,5 @@
   "optimizer": "moore-penrose",
   "data_encoding":"one-hot-encoding",
   "pred_method": "argmax",
-  "path_to_results": "/spesis_standard/"
+  "path_to_results": "spesis_standard/"
 }

@@ -113,7 +113,7 @@ def run_experiment(
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
-    cm_name = f"seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}"
+    cm_name = f"seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_mutrate_{mutation_rate}_mutindrate_{mutation_ind_rate}_crossrate_{crossover_rate}_maxgen_{max_gen}_maxpat_{max_patience}_mu_{mu}_lambda_{lambda_}_selstr_{selection_strategy}"
     """ if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True) """
 
@@ -212,6 +212,7 @@ def run_experiment(
     cm_test = metrics_test["cm"]
     cm_eval = metrics_eval["cm"]
 
+
     plot_class_confusion_matrix(split=f"{cm_name}_TRAIN", cm = cm_train, labels= metrics_train['unique_labels'], path_to_exp_results=path_to_results)
     plot_class_confusion_matrix(split=f"{cm_name}_TEST", cm = cm_test, labels= metrics_test['unique_labels'], path_to_exp_results=path_to_results)
     plot_class_confusion_matrix(split=f"{cm_name}_EVAL", cm = cm_eval, labels= metrics_eval['unique_labels'], path_to_exp_results=path_to_results)
@@ -263,6 +264,8 @@ if __name__ == "__main__":
     mutation_individual_rate = conf["mutation_individual_rate"]
     default_path_results = path_to_results + conf["path_to_results"]
     update_genes = conf["update_genes"]
+
+    os.makedirs(default_path_results, exist_ok=True)
 
     data_train, data_test, map_class_dict = get_data(dataset, data_encoding)
     
@@ -328,7 +331,7 @@ if __name__ == "__main__":
                                                         i_seed,
                                                         rng_seed,
                                                         local_results,
-                                                        path_to_results
+                                                        default_path_results
                                                     )
                                                     end_time = time.time()
                                                     elapsed_time = end_time - start_time
