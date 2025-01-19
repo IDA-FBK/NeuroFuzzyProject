@@ -73,7 +73,7 @@ def do_job(tasks_to_accomplish, data_train, data_test, data_encoding, pred_metho
                 i_seed,
                 rng_seed,
                 local_results,
-                path_to_results
+                default_path_results
             )
             end_time = time.time()
             elapsed_time = end_time - start_time
@@ -96,12 +96,12 @@ def do_job(tasks_to_accomplish, data_train, data_test, data_encoding, pred_metho
 
 
 
-def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed):
+def initialize_population(pop_size, num_mfs, update_gene, neuron_type, fuzzy_interpretation, activation, optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed):
     population = []
     
     for _ in range(pop_size):
         individuo = FNNModel(num_mfs=num_mfs, update_gene=update_gene, neuron_type=neuron_type, interpretation=fuzzy_interpretation, activation=activation, optimizer=optimizer, visualizeMF=False, mutation_ind_rate=mutation_ind_rate, data_encoding=data_encoding, rng_seed=rng_seed)
-        individuo.initialize_individual(x_train)
+        individuo.initialize_individual(x_train, y_train)
         population.append(individuo)
         
     return population
@@ -178,7 +178,7 @@ def run_experiment(
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
     path_to_exp_results = path_to_results + exp_str
-    cm_name = f"seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}"
+    cm_name = f"seed_{i_seed}_neurontype_{neuron_type}_nummfs_{num_mfs}_mutrate_{mutation_rate}_mutindrate_{mutation_ind_rate}_crossrate_{crossover_rate}_maxgen_{max_gen}_maxpat_{max_patience}_mu_{mu}_lambda_{lambda_}_selstr_{selection_strategy}"
 
     """ if not os.path.exists(path_to_exp_results):
         os.makedirs(path_to_exp_results, exist_ok=True) """
@@ -198,7 +198,7 @@ def run_experiment(
     (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
     
     
-    population = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, mutation_ind_rate, data_encoding, rng_seed)
+    population = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed)
     
     generation = 0
     best_fitness = 0
@@ -327,6 +327,8 @@ if __name__ == "__main__":
     default_path_results = path_to_results + conf["path_to_results"]
     update_genes = conf["update_genes"]
     
+    os.makedirs(default_path_results, exist_ok=True)
+
     print("Configuration loaded")
     print("data_encoding: ", data_encoding) 
     print("pred_method: ", pred_method)
