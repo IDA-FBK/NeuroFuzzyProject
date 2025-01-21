@@ -161,12 +161,12 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-experiments/results/diabetes/change_V/*
-experiments/results/diabetes/change_w/*
-experiments/results/diabetes/no_evo/*
-experiments/results/maternal_hr/change_V/*
-experiments/results/maternal_hr/change_w/*
-experiments/results/maternal_hr/no_evo/*
+# experiments/results/diabetes/change_V/*
+# experiments/results/diabetes/change_w/*
+# experiments/results/diabetes/no_evo/*
+# experiments/results/maternal_hr/change_V/*
+# experiments/results/maternal_hr/change_w/*
+# experiments/results/maternal_hr/no_evo/*
 
-# experiments/results/*
+experiments/results/*
 time.txt
