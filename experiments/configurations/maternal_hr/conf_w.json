@@ -23,5 +23,5 @@
     "mu": [50],
     "lambda_": [70],
     "selection_strategies": ["plus"],
-    "path_to_results": "maternal_hr/"
+    "path_to_results": "maternal_hr/change_w/"
 } 
