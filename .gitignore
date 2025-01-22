@@ -167,9 +167,9 @@ cython_debug/
 # experiments/results/maternal_hr/change_V/*
 # experiments/results/maternal_hr/change_w/*
 # experiments/results/maternal_hr/no_evo/*
-#experiments/results/sepsis/change_V/*
-#experiments/results/sepsis/change_w/*
-#experiments/results/sepsis/no_evo/*
+# experiments/results/sepsis/change_V/*
+# experiments/results/sepsis/change_w/*
+# experiments/results/sepsis/no_evo/*
 
 experiments/results/*
 time.txt
