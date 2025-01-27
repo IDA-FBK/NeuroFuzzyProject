@@ -1,0 +1,17 @@
+Seed,NeuronType,MFs,update_gene,mutation_rate,mutation_individual_rate,crossover_rate,max_generations,max_patience,mu,lambda,selection_strategy,Train_Acc.,Dev_Acc.,Test_Acc.,time
+0,andneuron_prod-probsum,2,,0.3,0.3,0.3,50,20,50,70,plus,0.748,0.739,0.708,585.4761564731598
+0,andneuron_prod-probsum,2,,0.3,0.3,0.7,50,20,50,70,plus,0.746,0.754,0.695,581.6756374835968
+0,andneuron_prod-probsum,2,,0.3,0.7,0.3,50,20,50,70,plus,0.758,0.746,0.689,586.6895506381989
+0,andneuron_prod-probsum,2,,0.3,0.7,0.7,50,20,50,70,plus,0.75,0.746,0.659,585.4943256378174
+0,andneuron_prod-probsum,2,,0.7,0.3,0.3,50,20,50,70,plus,0.751,0.739,0.679,586.7606043815613
+0,andneuron_prod-probsum,2,,0.7,0.3,0.7,50,20,50,70,plus,0.746,0.754,0.682,590.3754534721375
+0,andneuron_prod-probsum,2,,0.7,0.7,0.3,50,20,50,70,plus,0.748,0.739,0.662,584.8701212406158
+0,andneuron_prod-probsum,2,,0.7,0.7,0.7,50,20,50,70,plus,0.744,0.739,0.679,583.4231057167053
+0,orneuron_probsum-prod,2,,0.3,0.3,0.3,50,20,50,70,plus,0.75,0.746,0.662,426.5992908477783
+0,orneuron_probsum-prod,2,,0.3,0.3,0.7,50,20,50,70,plus,0.751,0.754,0.689,428.1336259841919
+0,orneuron_probsum-prod,2,,0.3,0.7,0.3,50,20,50,70,plus,0.751,0.739,0.692,428.73261284828186
+0,orneuron_probsum-prod,2,,0.3,0.7,0.7,50,20,50,70,plus,0.75,0.754,0.672,427.4131290912628
+0,orneuron_probsum-prod,2,,0.7,0.3,0.3,50,20,50,70,plus,0.753,0.739,0.689,427.13937854766846
+0,orneuron_probsum-prod,2,,0.7,0.3,0.7,50,20,50,70,plus,0.757,0.739,0.692,426.16449785232544
+0,orneuron_probsum-prod,2,,0.7,0.7,0.3,50,20,50,70,plus,0.744,0.739,0.679,427.72410583496094
+0,orneuron_probsum-prod,2,,0.7,0.7,0.7,50,20,50,70,plus,0.757,0.739,0.682,430.79865407943726

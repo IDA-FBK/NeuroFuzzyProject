@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
 from imblearn.over_sampling import RandomOverSampler
 from collections import Counter
+from sklearn.decomposition import PCA
 
 
 def get_one_encoding(labels):
@@ -31,7 +32,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
           to their original dataset class values.
     """
-    sepsis = False  # Flag to indicate if the dataset is sepsis. In this case, we already have two datasets separated: one for training and another for testing.
+    already_split = False  # Flag to indicate if the dataset is sepsis. In this case, we already have two datasets separated: one for training and another for testing.
     categorical_data = False
     map_class_dict = {}
     if dataset == "diabetes":
@@ -373,7 +374,9 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # Assuming the obesity dataset is stored in 'data/datasets/obesity.csv'
         # TODO: implement new code here (see Issue#14)
-        categorical_data = True
+        categorical_data = False #Solo perchè lo faccio io, ma in realtà dovrebbe essere True
+        already_split = True #We already have two datasets separated: one for training and another for testing.
+        
         file_path = "data/datasets/obesity.csv"
         df = pd.read_csv(file_path, sep=",")
 
@@ -397,7 +400,21 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
                 y[y == label] = i
                 map_class_dict[i] = label
             y = y.reshape(-1, 1)
-
+        
+        
+        #PCA to reduce the number of features
+        pca = PCA(n_components=8)
+        
+        x_train_reals, x_test_reals, x_cat_train, x_cat_test, y_train, y_test = train_test_split(x, x_cat, y, test_size=test_size, random_state=seed)
+        
+        x_train = np.hstack((x_train_reals, x_cat_train))
+        x_test = np.hstack((x_test_reals, x_cat_test))
+        
+        x_train = pca.fit_transform(x_train)
+        x_test = pca.transform(x_test)
+        
+        
+        
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
@@ -468,7 +485,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
         
-        sepsis = True #We already have two datasets separated: one for training and another for testing.
+        already_split = True #We already have two datasets separated: one for training and another for testing.
         
         filepath_primary_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_primary_cohort.csv"
         filepath_validation_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_validation_cohort.csv"
@@ -509,7 +526,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     # Data normalization
     scaler = StandardScaler()
 
-    if not sepsis: #If it is not sepsis, we have to split the data. Otherwise, we already have two datasets separated: one for training and another for testing.
+    if not already_split: #If it is not sepsis, we have to split the data. Otherwise, we already have two datasets separated: one for training and another for testing.
         if categorical_data:
             x_train, x_test, x_cat_train, x_cat_test, y_train, y_test = train_test_split(
             x, x_cat, y, test_size=test_size, random_state=seed)
@@ -526,5 +543,4 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
     
     data_train = (x_train_normalized, y_train)
     data_test = (x_test_normalized, y_test)
-    
     return data_train, data_test, map_class_dict
