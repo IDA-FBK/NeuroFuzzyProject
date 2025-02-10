@@ -3,6 +3,7 @@ import os.path
 
 import numpy as np
 import pandas as pd
+import time
 
 from data.data import get_data
 from experiments.configurations.configurations import get_configuration
@@ -51,7 +52,7 @@ def run_experiment(
     Returns:
     None
     """
-
+    start_time = time.time()
     current_neuron_type, fuzzy_interpretation = neuron_type.split("_")
 
     exp_str = f"/exp-seed_{i_seed}_neurontype_{current_neuron_type}_interp_{fuzzy_interpretation}_nummfs_{num_mfs}_activation_{activation}/"
@@ -74,7 +75,7 @@ def run_experiment(
         visualizeMF=False,
         rng_seed=rng_seed,
     )
-
+    
     print("\nSummary of Performance Metrics:")
     fnn_model.train_model(x_train, y_train)
     evaluation_metrics_train = fnn_model.evaluate_model(x_train, y_train, data_encoding, pred_method, map_class_dict)
@@ -97,7 +98,7 @@ def run_experiment(
     plot_class_confusion_matrix("TEST", evaluation_metrics_test["cm"], evaluation_metrics_test["unique_labels"],
                                 path_to_exp_results)
 
-
+    ending_time = time.time() - start_time
     # Append both train and test metrics to the DataFrame
     results_df.loc[len(results_df)] = [
         i_seed,
@@ -114,7 +115,8 @@ def run_experiment(
         evaluation_metrics_test["precision"],  # Testing Precision
         evaluation_metrics_test["specificity"],  # Testing Specificity
     ]
-
+    with open('time.txt', 'a') as file:
+        file.write(str(ending_time)+'\n')
     # TODO: evaluate interpretabilty is in stand-by
     #evaluate_interpretability(fnn_model, x_test, path_to_exp_results)
 
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     results_df = pd.DataFrame(
         columns=[
             "Seed", "NeuronType", "MFs", "Train_Acc.", "Train_F1", "Train_Rec.", "Train_Prec.",
-            "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec.",
+            "Train_Spec.", "Test_Acc.", "Test_F1", "Test_Rec.", "Test_Prec.", "Test_Spec."
         ]
     )
 

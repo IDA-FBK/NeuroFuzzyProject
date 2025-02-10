@@ -1,5 +1,7 @@
 
 import numpy as np
+import copy
+
 from numpy.linalg import pinv
 from scipy.stats import norm
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
@@ -21,12 +23,15 @@ class FNNModel:
     def __init__(
         self,
         num_mfs,
+        update_gene="all",
         neuron_type="andneuron",
         interpretation="prod-probsum",
         activation="linear",
         optimizer="moore-penrose",
         visualizeMF=False,
-        rng_seed=None,
+        mutation_ind_rate = 0.5,
+        data_encoding = "one-hot-encoding",
+        rng_seed=None
     ):
         """
         Initialize a Fuzzy Neural Network (FNN) model with the specified configuration.
@@ -52,6 +57,7 @@ class FNNModel:
         self.activation = activation
         self.optimizer = optimizer
         self.visualizeMF = visualizeMF
+        self.data_encoding = data_encoding
 
         if rng_seed is None:
             self.rng_seed = np.random.default_rng(0)
@@ -63,6 +69,80 @@ class FNNModel:
         self.total_fuzzy_neurons = None
         self.rules_dictionary = []  # Stores fuzzy rules
         self.axioms = []  # Stores axioms generated from fuzzy rules
+        self.fitness = None
+        self.mutation_ind_rate = mutation_ind_rate # Probability for the individual to mutate 
+        self.update_gene = update_gene
+        
+        self.fuzzy_outputs = None
+        
+    def initialize_individual(self, x_train, y_train):
+        fuzzy_outputs = self.fuzzification_layer(x_train)
+        self.fuzzy_outputs = copy.deepcopy(fuzzy_outputs)
+        logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
+
+        if self.data_encoding not in ["one-hot-encoding", "no-encoding"]:
+            raise ValueError("Invalid data encoding method")
+        
+        if self.optimizer not in ["moore-penrose"]:
+            raise ValueError("Invalid optimizer method")
+        
+        if self.optimizer == "moore-penrose":
+            self.V = np.dot(pinv(logic_outputs), y_train)
+
+    def calculate_fitness(self, fitness_type, x, y, data_encoding, pred_method, map_class_dict, update_fitness=True, fast = False):
+        evaluation_metrics_train = self.evaluate_model(x, y, data_encoding, pred_method, map_class_dict,fast=fast)
+        
+        fitness_value = evaluation_metrics_train[fitness_type]
+        
+        if update_fitness: # True only on the train set
+            self.fitness = fitness_value
+        
+        return evaluation_metrics_train
+    
+    def generate_parameters(self, y_train):
+        if self.update_gene != "V":
+            logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
+            self.V = np.dot(pinv(logic_outputs), y_train)
+        
+        self.fitness = None #Devi rimuovere il fitness perche' cambiano i parametri
+    
+    def mutate(self, mutation_rate=0.1):
+        """
+        Mutate the individual (V) by adding random noise to the weights.
+
+        Parameters:
+            - mutation_rate (float): Mutation rate, which determines the amount of noise to add to the weights.
+
+        Returns:
+            None
+        """
+        random_number = self.rng_seed.uniform()
+        if random_number < self.mutation_ind_rate:
+            # Reset fitness
+            self.fitness = None
+
+            if self.update_gene == "V":
+                self.V += self.rng_seed.normal(0, mutation_rate, self.V.shape)
+
+            elif self.update_gene == "neuron_weights":
+                self.neuron_weights += self.rng_seed.normal(0, mutation_rate, self.neuron_weights.shape)
+
+                #The weights should be between 0 and 1:
+                self.neuron_weights[self.neuron_weights < 0] = 0
+                self.neuron_weights[self.neuron_weights > 1] = 1
+
+                """elif self.update_gene == "mf_params":
+                    for feature_index in range(len(self.mf_params)):
+                        for mf_index in range(self.num_mfs):
+                            self.mf_params[feature_index]["centers"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                            self.mf_params[feature_index]["sigmas"][mf_index] += self.rng_seed.normal(0, mutation_rate)
+                            if self.mf_params[feature_index]["sigmas"][mf_index] < 0:
+                                self.mf_params[feature_index]["sigmas"][mf_index] = 0.1"""
+
+            else:
+                raise ValueError("Invalid update_gene method")
+
+
 
     def fuzzification_layer(self, x):
         """
@@ -116,6 +196,8 @@ class FNNModel:
                 fuzzy_outputs[:, feature_index * self.num_mfs + mf_index] = (
                     gaussian_output
                 )
+                if 'nan' in fuzzy_outputs or np.isnan(fuzzy_outputs).any():
+                    print("Nan in fuzzy output")
 
         self.rules_dictionary = self.generate_rules_dictionary()
         return fuzzy_outputs  # Return the fuzzy outputs
@@ -252,7 +334,7 @@ class FNNModel:
         )
         self.model.fit(x, y, epochs=3, batch_size=1)
 
-    def evaluate_model(self, x_test, y_test, data_encoding, pred_method, map_class_dict):
+    def evaluate_model(self, x_test, y_test, data_encoding, pred_method, map_class_dict, fast = False):
         """
         Evaluate the trained FNN model using test data.
 
@@ -270,7 +352,16 @@ class FNNModel:
             evaluation_metrics (dict): Dictionary containing evaluation metrics including accuracy, specificity,
             precision, recall, and F-score.
         """
+        if(fast):
+            entries_considered = min(100, int(0.1 * x_test.shape[0]))
+            #randomly select entries
+            indices = self.rng_seed.choice(x_test.shape[0], entries_considered, replace=False)
+            x_test = x_test[indices]
+            y_test = y_test[indices]
+
+            #print(f"Fast evaluation: Only {len(x_test)} entries are considered for evaluation")
         # Evaluate the trained FNN model
+
         evaluation_metrics = {}
         fuzzy_outputs_test = self.fuzzification_layer(x_test)
         logic_outputs_test = self.logic_neurons_layer(fuzzy_outputs_test)
@@ -280,7 +371,7 @@ class FNNModel:
 
             # TODO: no-encoding + sign was related to the previous version (we may consider to remove it),
             # the 'official' and current version is  the ones with one hot encoding + argmax
-            if data_encoding == "no-encoding" and pred_method=="sign":
+            if data_encoding == "no-encoding" and pred_method== "sign":
                 y_pred = np.sign(output_v)
 
                 # show again original classes
@@ -308,7 +399,7 @@ class FNNModel:
                 tn, fp, fn, tp = cm.ravel()
                 specificity = tn / (tn + fp)
             else:
-                average_metrics = "macro"
+                average_metrics = "micro"
 
                 # For multi-class, we need to calculate specificity for each class in a one-vs-rest way
                 specificities = []
@@ -328,7 +419,7 @@ class FNNModel:
                 specificity = np.mean(specificities)  # Average specificity for multi-class
 
             accuracy = accuracy_score(y_test, y_pred)
-            precision = precision_score(y_test, y_pred, average=average_metrics)
+            precision = precision_score(y_test, y_pred, average=average_metrics, zero_division=0)
             recall = recall_score(y_test, y_pred, average=average_metrics)
             f1 = f1_score(y_test, y_pred, average=average_metrics)
 
@@ -337,19 +428,20 @@ class FNNModel:
             evaluation_metrics["precision"] = round(precision, 3)
             evaluation_metrics["recall"] = round(recall, 3)
             evaluation_metrics["fscore"] = round(f1, 3)
+            
             evaluation_metrics["cm"] = cm
             evaluation_metrics["unique_labels"] = np.unique(y_test)
 
             # Prints the metrics
-            print(f"\nAccuracy: {accuracy * 100:.2f}%")
+            """ print(f"\nAccuracy: {accuracy * 100:.2f}%")
             print(f"Specificity: {specificity}")
             print(f"Precision: {precision}")
             print(f"Recall: {recall}")
-            print(f"F-Score: {f1}")
+            print(f"F-Score: {f1}") """
 
         else:
             scores = self.model.evaluate(logic_outputs_test, y_test)
-            print(f"\nAccuracy: {scores[1] * 100:.2f}%")
+            #print(f"\nAccuracy: {scores[1] * 100:.2f}%")
 
             evaluation_metrics["accuracy"] = scores[1]
 

@@ -12,5 +12,7 @@
   "activation": "linear",
   "optimizer": "moore-penrose",
   "data_encoding":"no-encoding",
-  "pred_method":"sign"
+  "pred_method":"sign",
+  "fitness_function": "accuracy",
+  "mutation_rate": 0.1
 }

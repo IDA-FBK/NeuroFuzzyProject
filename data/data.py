@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd  # Import pandas to load and process the CSV file
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
+from imblearn.over_sampling import RandomOverSampler
+from collections import Counter
+from sklearn.decomposition import PCA
 
 
 def get_one_encoding(labels):
@@ -29,7 +32,8 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         - map_class_dict (dict): A dictionary that maps the predicted class values (used internally by the model)
           to their original dataset class values.
     """
-
+    already_split = False  # Flag to indicate if the dataset is sepsis. In this case, we already have two datasets separated: one for training and another for testing.
+    categorical_data = False
     map_class_dict = {}
     if dataset == "diabetes":
         # DESCRIPTION:
@@ -198,7 +202,6 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/dataset/processed_cleveland.data"
         # TODO: implement new code here (see Issue#10)
 
-
     elif dataset == "liver":
         # DESCRIPTION:
         # -------------------------
@@ -265,6 +268,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         file_path = "data/datasets/mammographic_masses.data"
 
         # TODO: implement new code here (see Issue#11)
+
     elif dataset == "maternal-hr":
         # DESCRIPTION:
         # -------------------------
@@ -274,7 +278,7 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         # RiskLevel. All these are the responsible and significant risk factors for maternal mortality, that is one of
         # the main concern of SDG of UN.
         # -------------------------
-        # NUMBER OF INSTANCES: 1013
+        # NUMBER OF INSTANCES: 1014
         # NUMBER OF ATTRIBUTES: 6 + 3 classes
         #       1. Age: any ages in years when a women during pregnant (integer)
         #       2. SystolicBP: upper value of Blood Pressure in mmHg, another significant attribute during pregnancy (integer)
@@ -288,16 +292,44 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # -------------------------
         # AVAILABLE AT: https://archive.ics.uci.edu/dataset/863/maternal+health+risk
+        # (also KAGGLE: https://www.kaggle.com/datasets/csafrit2/maternal-health-risk-data)
         # POSSIBLE COMPARISON (TO INVESTIGATE):
-        # - paper:
+        # - paper: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2023.1213436/full (check others?)
         # - code: ?
         # - scholar: https://scholar.google.com/scholar?cites=1019849447949783013&as_sdt=2005&sciodt=0,5&hl=en
         #
         # DOUBTS: Are features scaled in other approaches using this dataset?
-        #
-        # Assuming the preclampsia dataset is stored in 'data/datasets/maternal_health_risk_data.csv'
-        # TODO: implement new code here (see Issue#13)
-        pass
+        # Answer: In Togunwa et al. (2023) the StandardScaler was applied to scale the data (and we do the same as final step for all datasets).
+        
+        categorical_data = False
+
+        # Assuming the maternal health risk dataset is stored in 'data/datasets/maternal_health_risk_data_set.csv'
+        file_path = "data/datasets/maternal_health_risk_data_set.csv"
+        df = pd.read_csv(file_path, sep=",")
+
+        # Code the target (categorical) variables into numerical variables to facilitate computation,
+        # low-risk, mid-risk and high-risk classes are coded as 0, 1, and 2 respectively.
+        df['RiskLevel'] = df['RiskLevel'].map({'low risk': 0, 'mid risk': 1, 'high risk': 2})
+
+        # The heart rate variable had a minimum value of 7, which is not biologically plausible,
+        # consequently, two data instances with this outlier value are re-imputed with the mode value of 70.
+        df['HeartRate'] = df['HeartRate'].replace(7, 70)
+        
+        x = df.iloc[:, :-1].values
+        y = df.iloc[:, -1].values
+
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            # Map the target classes to -1, 0, 1
+            y[y == 0] = -1
+            y[y == 1] = 0
+            y[y == 2] = 1
+            map_class_dict[-1] = 0
+            map_class_dict[0] = 1
+            map_class_dict[1] = 2
+            y = y.reshape(-1, 1)
+
     elif dataset == "obesity":
         # DESCRIPTION:
         # -------------------------
@@ -342,7 +374,47 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
         #
         # Assuming the obesity dataset is stored in 'data/datasets/obesity.csv'
         # TODO: implement new code here (see Issue#14)
-        pass
+        categorical_data = False #Solo perchè lo faccio io, ma in realtà dovrebbe essere True
+        already_split = True #We already have two datasets separated: one for training and another for testing.
+        
+        file_path = "data/datasets/obesity.csv"
+        df = pd.read_csv(file_path, sep=",")
+
+        binary_cols = ['Gender', 'family_history_with_overweight', 'SMOKE', 'SCC','FAVC']
+        multi_cat_cols = ['CALC', 'MTRANS']
+        ordinal_cols = ['CAEC']
+        all_cat_cols = binary_cols + multi_cat_cols + ordinal_cols
+        label_encoder = LabelEncoder()
+        for col in all_cat_cols:
+            df[col] = label_encoder.fit_transform(df[col])
+        x_cat = df[all_cat_cols]
+        
+        numerical_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+        x = df[numerical_cols].astype(np.float32)  
+        
+        y = df.iloc[:, -1].values
+        if data_encoding == "one-hot-encoding":
+            y = get_one_encoding(y)
+        elif data_encoding == "no-encoding":
+            for i, label in enumerate(np.unique(y)):
+                y[y == label] = i
+                map_class_dict[i] = label
+            y = y.reshape(-1, 1)
+        
+        
+        #PCA to reduce the number of features
+        pca = PCA(n_components=8)
+        
+        x_train_reals, x_test_reals, x_cat_train, x_cat_test, y_train, y_test = train_test_split(x, x_cat, y, test_size=test_size, random_state=seed)
+        
+        x_train = np.hstack((x_train_reals, x_cat_train))
+        x_test = np.hstack((x_test_reals, x_cat_test))
+        
+        x_train = pca.fit_transform(x_train)
+        x_test = pca.transform(x_test)
+        
+        
+        
     elif dataset == "preeclampsia":
         # DESCRIPTION:
         # -------------------------
@@ -412,18 +484,63 @@ def get_data(dataset, data_encoding, seed=0, test_size=0.3):
 
         # Assuming the sepsis dataset is stored in 'data/datasets/sepsis/'
         # TODO: implement new code here (see Issue#12)
-        pass
+        
+        already_split = True #We already have two datasets separated: one for training and another for testing.
+        
+        filepath_primary_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_primary_cohort.csv"
+        filepath_validation_cohort = "data/datasets/sepsis/s41598-020-73558-3_sepsis_survival_validation_cohort.csv"
+        
+        df_primary = pd.read_csv(filepath_primary_cohort, sep=",")
+        df_validation = pd.read_csv(filepath_validation_cohort, sep=",")
+        
+        
+        #Train data
+        x_train = df_primary.iloc[:, :-1].values
+        y_train = df_primary.iloc[:, -1].values
+        
+        
+        oversample = RandomOverSampler(sampling_strategy='minority') 
+        x_train, y_train = oversample.fit_resample(x_train, y_train)
+        
+        #Test data
+        x_test = df_validation.iloc[:, :-1].values
+        y_test = df_validation.iloc[:, -1].values
+        
+        
+        if data_encoding == "one-hot-encoding":
+            y_train = get_one_encoding(y_train)
+            y_test = get_one_encoding(y_test)
+            
+        elif data_encoding == "no-encoding":
+            y_train[y_train == 0] = -1
+            map_class_dict[-1] = 0
+            y_train = y_train.reshape(-1, 1)
+            
+            y_test[y_test == 0] = -1
+            y_test = y_test.reshape(-1, 1)
+            
+
+    else:
+        raise ValueError("Invalid dataset name.")
+
     # Data normalization
     scaler = StandardScaler()
 
-    x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=test_size, random_state=seed
-    )
-
+    if not already_split: #If it is not sepsis, we have to split the data. Otherwise, we already have two datasets separated: one for training and another for testing.
+        if categorical_data:
+            x_train, x_test, x_cat_train, x_cat_test, y_train, y_test = train_test_split(
+            x, x_cat, y, test_size=test_size, random_state=seed)
+        else:
+            x_train, x_test, y_train, y_test = train_test_split(
+                x, y, test_size=test_size, random_state=seed)
+    
     x_train_normalized = scaler.fit_transform(x_train)
     x_test_normalized = scaler.transform(x_test)
 
+    if(categorical_data):
+        x_train_normalized = np.hstack((x_train_normalized, x_cat_train))
+        x_test_normalized = np.hstack((x_test_normalized, x_cat_test))
+    
     data_train = (x_train_normalized, y_train)
     data_test = (x_test_normalized, y_test)
-
     return data_train, data_test, map_class_dict

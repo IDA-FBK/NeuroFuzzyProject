@@ -1,0 +1,3 @@
+NeuronType,MFs,Train Acc. Mean,Train Acc. Std,Train F1 Mean,Train F1 Std,Train Rec. Mean,Train Rec. Std,Train Prec. Mean,Train Prec. Std,Train Spec. Mean,Train Spec. Std,Test Acc.,Test Acc. Std,Test F1,Test F1 Std,Test Rec.,Test Rec. Std,Test Prec.,Test Prec. Std,Test Spec.,Test Spec. Std
+andneuron_prod-probsum,2,0.912,0.007,0.875,0.011,0.843,0.013,0.910,0.012,0.952,0.007,0.707,0.010,0.511,0.025,0.493,0.043,0.533,0.019,0.804,0.021
+orneuron_probsum-prod,2,0.912,0.006,0.874,0.009,0.839,0.017,0.913,0.009,0.954,0.006,0.721,0.021,0.536,0.035,0.517,0.046,0.558,0.039,0.814,0.029
