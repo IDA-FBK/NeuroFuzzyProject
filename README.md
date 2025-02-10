@@ -1,15 +1,23 @@
 # Neuro-Fuzzy project
+This repo contains the code for running a standard and evolutionary version of a Neuro-Fuzzy Inference System.
+We explore the development and application of Evolutionary Algorithms to evolve a Neuro-Fuzzy network in different medical fields.
 
 ## Directories
 
 - **data/**: Contains everything related to data.
-  - *Description*: This directory contains the script for loading the datasets. 
+  - This directory contains the script for loading the datasets. 
 
 - **experiments/**: Contains everything related to experiments.
-  - *Description*: This directory includes configurations, results, and evaluation scripts.
+  - This directory includes configurations for each dataset, results, and evaluation scripts.
+    - **results/**: Contains results for each dataset used, also subdivided into folders, and an overall summary
+    
 
-- **models/**: Contains models and operators.
-  - *Description*: Includes models used and operators (e.g., "and" and "or").
+- **models/**: Contains models, operators, selection and crossover
+  - They includes respectively
+    - models used, the creation of individuals for the population and the calculus of the fitness
+    - implementation of AND and OR neurons and operations on those values
+    - selection of the best individuals from the population, eventually with mutation.
+    - performation of crossover between two individuals
 
 ## Running the Code
 
@@ -31,7 +39,9 @@
 
 - Ensure you have a configuration file located in the `experiments/configurations/<dataset>/` directory.
 
-- This file should contain experiment settings such as number of seeds, neuron types, number of membership functions (MFs), activation function, and optimizer (see conf file inside `experiments/configurations/iris/` ).
+- For running the _standard_ version, this file should contain experiment settings such as number of seeds, neuron types, number of membership functions (MFs), activation function, and optimizer (see conf file inside `experiments/configurations/iris/` ).
+
+- For running the _evolutionary_ version, this file should contain experiment settings such as the number of seeds, neuron types, fitness fn, parameters for mutation and crossover etc, and the path for storing the results.
 
 ### 3. Command-line Arguments
 
@@ -40,7 +50,7 @@
 - Use the following command-line arguments:
   - `-dataset`: Specify the dataset to use (default is "iris").
   - `-path_to_conf`: Provide path to configuration file (default is `./experiments/configurations/iris/conf-00.json`).
-  - `-path_to_results`: Define directory where results will be saved (default is `./experiments/results/iris/`).
+  - `-path_to_results`: Define directory where results will be saved (default is `./experiments/results/iris/`). This argument in not mandatory for running the evolutionary version (since it is present in the configuration file)
 
 ### 4. Run the Script
 
@@ -51,12 +61,13 @@
 
 ### 5. Results 
 
-Results are stored in `./results/<dataset>/` directory. This directory contains:
+Results are stored in `./results/<dataset>/` directory. This directory can contains:
 
 - Plots, fuzzy rules and axioms generated during each experiment.
-- `runs_results.csv`: A CSV file storing the results of each run.
-- `mean_std_results.csv`: A CSV file storing the mean and standard deviation of grouped runs (by NeuronType and MFS).
-
+- `runs_results.csv`: A CSV file storing the results of each run (standard version).
+- `mean_std_results.csv`: A CSV file storing the mean and standard deviation of grouped runs (by NeuronType and MFS) (standard version).
+- `local_results_{all_parameters_used}`: A CSV file containing the results of the current experiment, each row is a new generation (evo version).
+- `global_results.csv`: A CSV file combaining the fitness values of training, evaluation and test sets for each configuration (evo version).
 
 ## Authors
 - Paulo Vitor De Campos Souza: pdecampossouza@fbk.eu
