@@ -99,9 +99,8 @@ class FNNModel:
         
         return evaluation_metrics_train
     
-    def generate_parameters(self, x_train, y_train):
+    def generate_parameters(self, y_train):
         if self.update_gene != "V":
-            #fuzzy_outputs = self.fuzzification_layer(x_train)
             logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
             self.V = np.dot(pinv(logic_outputs), y_train)
         
@@ -400,7 +399,7 @@ class FNNModel:
                 tn, fp, fn, tp = cm.ravel()
                 specificity = tn / (tn + fp)
             else:
-                average_metrics = "macro"
+                average_metrics = "micro"
 
                 # For multi-class, we need to calculate specificity for each class in a one-vs-rest way
                 specificities = []
@@ -429,6 +428,7 @@ class FNNModel:
             evaluation_metrics["precision"] = round(precision, 3)
             evaluation_metrics["recall"] = round(recall, 3)
             evaluation_metrics["fscore"] = round(f1, 3)
+            
             evaluation_metrics["cm"] = cm
             evaluation_metrics["unique_labels"] = np.unique(y_test)
 
