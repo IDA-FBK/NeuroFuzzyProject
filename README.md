@@ -1,6 +1,8 @@
-# Neuro-Fuzzy project
-This repo contains the code for running a standard and evolutionary version of a Neuro-Fuzzy Inference System.
-We explore the development and application of Evolutionary Algorithms to evolve a Neuro-Fuzzy network in different medical fields.
+# A Trustworthy Evolutionary Fuzzy Neural Network Framework for Maternal Health Risk Classification
+In this work, we propose a novel evolutionary fuzzy neural network framework that incorporates a genetic algorithm to enhance classification capabilities while preserving
+model transparency. Our architecture integrates evolutionary optimization into
+the parameter update process of an existing Fuzzy Neural Network. An extensive
+validation on the Maternal Health Risk dataset demonstrates the framework’s effectiveness in achieving a balance between predictive accuracy and explainability.
 
 ## Directories
 
@@ -54,9 +56,13 @@ We explore the development and application of Evolutionary Algorithms to evolve 
 
 ### 4. Run the Script
 
-- Run the main script using Python:
+- Run the FNN without evo:
   ```bash
   python main.py -dataset <dataset> -path_to_conf ./experiments/configurations/<dataset>/<name_of_conf>.json -path_to_results ./experiments/results/<dataset>/
+  ```
+- Run the evo-FNN:
+  ```bash
+  python main_evol_ind.py -dataset <dataset> -path_to_conf ./experiments/configurations/<dataset>/<name_of_conf>.json -path_to_results ./experiments/results/<dataset>/
   ```
 
 ### 5. Results 
