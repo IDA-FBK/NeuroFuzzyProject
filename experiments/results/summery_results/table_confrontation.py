@@ -58,7 +58,7 @@ def calculate_averages(grouped_data):
     return averaged_data
 
 
-def write_summary_to_csv(output_path, experiment_data):
+def write_summary_to_csv(output_path, baseline_data, experiment_data):
     header = ["Neuron Type", "Configuration", "Train Acc.", "Test Acc.", "Tempo (s)"]
 
     with open(output_path, mode="w", newline="", encoding="utf-8") as file:
@@ -68,9 +68,9 @@ def write_summary_to_csv(output_path, experiment_data):
         writer.writerows(baseline_data)
         writer.writerows(experiment_data)
 
-baseline_file = "NeuroFuzzyProject/experiments/results/no_evo_maternal.csv"
-experiment_file = "NeuroFuzzyProject/experiments/results/res_w_maternal.csv"
-output_file = "experiments/results/summery_results/summery_results_maternal.csv"
+baseline_file = "experiments/results/maternal_hr/normal_precision/runs_results.csv"
+experiment_file = "experiments/results/maternal_hr/precision_calculation/global_result_0.csv"
+output_file = "experiments/results/summery_results/summery_results_maternal_micro.csv"
 
 baseline_data = read_and_group_data_base(baseline_file)
 baseline_summary = calculate_averages(baseline_data)
@@ -78,6 +78,6 @@ baseline_summary = calculate_averages(baseline_data)
 experiment_data = read_and_group_data(experiment_file)
 experiment_summary = calculate_averages(experiment_data)
 
-write_summary_to_csv(output_file, experiment_summary)
+write_summary_to_csv(output_file, baseline_summary, experiment_summary)
 
 print(f"Summery into '{output_file}'!")

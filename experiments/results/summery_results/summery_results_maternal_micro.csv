@@ -1,0 +1,19 @@
+Neuron Type,Configuration,Train Acc.,Test Acc.,Tempo (s)
+andneuron_prod-probsu,2,0.736,0.672,1.48
+orneuron_probsum-pro,2,0.747,0.684,1.16
+andneuron_prod-probsu,"2, 0.1, 0.3, 0.3",0.76,0.694,2133.07
+andneuron_prod-probsu,"2, 0.1, 0.3, 0.7",0.756,0.689,2477.45
+andneuron_prod-probsu,"2, 0.1, 0.7, 0.3",0.758,0.695,2559.57
+andneuron_prod-probsu,"2, 0.1, 0.7, 0.7",0.757,0.687,2142.38
+andneuron_prod-probsu,"2, 0.2, 0.3, 0.3",0.758,0.689,2173.24
+andneuron_prod-probsu,"2, 0.2, 0.3, 0.7",0.76,0.683,2556.51
+andneuron_prod-probsu,"2, 0.2, 0.7, 0.3",0.759,0.693,2592.72
+andneuron_prod-probsu,"2, 0.2, 0.7, 0.7",0.761,0.691,2582.95
+orneuron_probsum-pro,"2, 0.1, 0.3, 0.3",0.756,0.689,1535.91
+orneuron_probsum-pro,"2, 0.1, 0.3, 0.7",0.755,0.684,1792.61
+orneuron_probsum-pro,"2, 0.1, 0.7, 0.3",0.757,0.69,1725.57
+orneuron_probsum-pro,"2, 0.1, 0.7, 0.7",0.76,0.689,1776.23
+orneuron_probsum-pro,"2, 0.2, 0.3, 0.3",0.758,0.69,1413.31
+orneuron_probsum-pro,"2, 0.2, 0.3, 0.7",0.757,0.689,1335.26
+orneuron_probsum-pro,"2, 0.2, 0.7, 0.3",0.759,0.689,1398.9
+orneuron_probsum-pro,"2, 0.2, 0.7, 0.7",0.756,0.684,1402.89
