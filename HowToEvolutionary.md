@@ -28,36 +28,21 @@ NeuroFuzzyProject
 │   │   ├── conf_general_weights.json
 │   │   └──  configurations.py
 │   ├── results
-│   │   ├── diabetes
-│   │   │   └── results of the experiments
 │   │   ├── maternal_hr
-│   │   │   └── results of the experiments (also with micro precision as fitness)
-│   │   ├── sepsis
-│   │   │   └── results of the experiments
-│   │   ├── previous_experiments
-│   │   │   ├── diabetes
-│   │   │   │   └── csv file with preliminar results 
-│   │   │   ├── maternal_hr
-│   │   │   │   └── csv file with preliminar results 
-│   │   │   ├── sepsis
-│   │   │   │   └── csv file with preliminar results 
-│   │   │   └── sepsis_evo_weights
-│   │   │       └── csv file with preliminar results 
-│   │   ├── summery_results
-│   │   │   ├── show_results_diabets.ipynb
-│   │   │   ├── show_results_maternal_hr.ipynb
-│   │   │   ├── show_results_sepsis.ipynb
-│   │   │   ├── summary_results_diabetes.csv
-│   │   │   ├── summary_results_maternal.csv
-│   │   │   ├── summary_results_sepsis.csv
-│   │   │   ├── summary_results_maternal_micro.csv
-│   │   │   └── table_confrontation.py
-│   │   ├── no_evo_diabete.css
-│   │   ├── no_evo_maternal.csv
-│   │   ├── no_evo_sepsis.csv
-│   │   ├── res_w_diabetes.csv
-│   │   ├── res_w_maternal.csv
-│   │   └── res_w_sepsis.csv
+│   │   │   ├── ReadMe.md
+│   │   │   ├── summary_results
+│   │   │   │   ├── show_results_maternal_hr.ipynb
+│   │   │   │   ├── summary_results_maternal.csv
+│   │   │   │   └── table_confrontation.py
+│   │   │   └── csv with all results of the experiments 
+│   │   └── previous_experiments
+│   │       ├── ReadMe.md
+│   │       ├── diabetes
+│   │       │   └── preliminar results of some experiments
+│   │       ├── maternal_hr
+│   │       │   └── preliminar results of some experiments (also with micro precision as fitness)
+│   │       └── sepsis
+│   │           └── preliminar results of the experiments
 │   ├── calculate.py
 │   ├── evolution.py
 │   ├── plots.py
@@ -73,7 +58,7 @@ NeuroFuzzyProject
 ├── baseline-1.py
 ├── main_evol_ind.py
 ├── main.py
-└── show_results.ipynb
+└── README.md
 ```
 
 ## Evolution operations
