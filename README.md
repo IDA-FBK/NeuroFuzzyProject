@@ -50,9 +50,9 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
 - The script accepts command-line arguments to specify dataset, path to configuration file, and directory to store results.
 
 - Use the following command-line arguments:
-  - `-dataset`: Specify the dataset to use (default is "iris").
-  - `-path_to_conf`: Provide path to configuration file (default is `./experiments/configurations/iris/conf-00.json`).
-  - `-path_to_results`: Define directory where results will be saved (default is `./experiments/results/iris/`). This argument in not mandatory for running the evolutionary version (since it is present in the configuration file)
+  - `-dataset`: Specify the dataset to use.
+  - `-path_to_conf`: Provide path to configuration file.
+  - `-path_to_results`: Define directory where results will be saved. This argument in not mandatory for running the evolutionary version (since it is present in the configuration file)
 
 ### 4. Run the Script
 
@@ -67,7 +67,7 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
 
 ### 5. Results 
 
-Results are stored in `./results/maternal_hr/` directory.
+Results are stored in `./results/<dataset>/` directory.
 
 ## Authors
 - Paulo Vitor De Campos Souza: pdecampossouza@fbk.eu
