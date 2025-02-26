@@ -1,0 +1,6 @@
+Seed,NeuronType,MFs,update_gene,mutation_rate,mutation_individual_rate,crossover_rate,max_generations,max_patience,mu,lambda,selection_strategy,Train_Acc.,Dev_Acc.,Test_Acc.,time
+3,andneuron_prod-probsum,2,,0.1,0.3,0.3,50,20,50,70,plus,0.66,0.63,0.769,33126.253237485886
+3,andneuron_prod-probsum,2,,0.1,0.3,0.7,50,20,50,70,plus,0.68,0.52,0.692,39614.74625349045
+3,andneuron_prod-probsum,2,,0.1,0.7,0.3,50,20,50,70,plus,0.64,0.6,0.769,31195.781614780426
+3,andneuron_prod-probsum,2,,0.1,0.7,0.7,50,20,50,70,plus,0.69,0.64,0.692,33440.699457407
+3,andneuron_prod-probsum,2,,0.2,0.3,0.3,50,20,50,70,plus,0.66,0.77,0.769,24926.856229305267
