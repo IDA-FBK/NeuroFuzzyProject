@@ -63,14 +63,23 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
   ```bash
   python main.py -dataset <dataset> -path_to_conf ./experiments/configurations/<dataset>/<name_of_conf>.json -path_to_results ./experiments/results/<dataset>/
   ```
+  For **Maternal Health Risk**:
+  ```bash
+  python main.py -dataset maternal-hr -path_to_conf ./experiments/configurations/maternal_hr/conf_w.json -path_to_results ./experiments/results/maternal_hr/
+  ```
 - Run the evo-FNN:
   ```bash
   python main_evol_ind.py -dataset <dataset> -path_to_conf ./experiments/configurations/<dataset>/<name_of_conf>.json -path_to_results ./experiments/results/<dataset>/
   ```
 
+  For **Maternal Health Risk**:
+  ```bash
+  python main_evol_ind.py -dataset maternal-hr -path_to_conf ./experiments/configurations/maternal_hr/conf_w.json -path_to_results ./experiments/results/maternal_hr/
+  ```
+
 ### 5. Results 
 
-Results are stored in `./results/<dataset>/` directory.
+Results are stored in `./results/<dataset>/` directory. You can see the results on the **Maternal Health Risk** dataset [here](https://github.com/IDA-FBK/NeuroFuzzyProject/tree/main/experiments/results/maternal_hr) (for information about its content, refer to the corresponding [README.md](https://github.com/IDA-FBK/NeuroFuzzyProject/blob/main/experiments/results/maternal_hr/README.md). 
 
 ## Authors
 - Paulo Vitor De Campos Souza: pdecampossouza@fbk.eu
