@@ -11,15 +11,15 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
 
 - **experiments/**: Contains everything related to experiments.
   - This directory includes configurations for each dataset, results, and evaluation scripts.
-    - **results/**: Contains results for each dataset used, also subdivided into folders, and an overall summary
+    - **results/**: Contains results for each dataset used, also subdivided into folders, and an overall summary.
     
 
 - **models/**: Contains models, operators, selection and crossover
-  - They includes respectively
-    - models used, the creation of individuals for the population and the calculus of the fitness
-    - implementation of AND and OR neurons and operations on those values
+  - They includes respectively:
+    - models used, the creation of individuals for the population and the calculus of the fitness.
+    - implementation of AND and OR neurons and operations on those values.
     - selection of the best individuals from the population, eventually with mutation.
-    - performation of crossover between two individuals
+    - performation of crossover between two individuals.
 
 ## Running the Code
 
@@ -34,14 +34,17 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
 - And activate it:
 
   ```bash
-  conda activate neurofuzzy
+  conda activate evoFNN
   ```
-
+> **⚠️ Important**
+> 
+> The environment has been created and tested on Ubuntu 20.04.6 LTS. If you encounter any issues or need assistance, please don't hesitate to contact us.
+> 
 ### 2. Set up Configuration
 
 - Ensure you have a configuration file located in the `experiments/configurations/<dataset>/` directory.
 
-- For running the _standard_ version, this file should contain experiment settings such as number of seeds, neuron types, number of membership functions (MFs), activation function, and optimizer (see conf file inside `experiments/configurations/iris/` ).
+- For running the _standard_ version, this file should contain experiment settings such as number of seeds, neuron types, number of membership functions (MFs), activation function, and optimizer.
 
 - For running the _evolutionary_ version, this file should contain experiment settings such as the number of seeds, neuron types, fitness fn, parameters for mutation and crossover etc, and the path for storing the results.
 
