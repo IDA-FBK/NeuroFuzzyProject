@@ -67,13 +67,7 @@ validation on the Maternal Health Risk dataset demonstrates the framework’s ef
 
 ### 5. Results 
 
-Results are stored in `./results/<dataset>/` directory. This directory can contains:
-
-- Plots, fuzzy rules and axioms generated during each experiment.
-- `runs_results.csv`: A CSV file storing the results of each run (standard version).
-- `mean_std_results.csv`: A CSV file storing the mean and standard deviation of grouped runs (by NeuronType and MFS) (standard version).
-- `local_results_{all_parameters_used}`: A CSV file containing the results of the current experiment, each row is a new generation (evo version).
-- `global_results.csv`: A CSV file combaining the fitness values of training, evaluation and test sets for each configuration (evo version).
+Results are stored in `./results/maternal_hr/` directory.
 
 ## Authors
 - Paulo Vitor De Campos Souza: pdecampossouza@fbk.eu
