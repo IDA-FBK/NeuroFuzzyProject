@@ -65,7 +65,7 @@ def selection(
     # Calculate fitness of offspring
     for individual in offspring:
         start_time_params_gen = time.time()
-        individual.generate_parameters(y)
+        individual.generate_parameters(x, y)
         end_time_params_gen= time.time()
         time_tracker["off_params_time"] += end_time_params_gen-start_time_params_gen
 

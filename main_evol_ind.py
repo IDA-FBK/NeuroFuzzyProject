@@ -119,8 +119,7 @@ def run_experiment(
     x_test, y_test = test_data[0], test_data[1]
 
     (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
-    
-    
+
     population:List[FNNModel] = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
                                        optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed, time_tracker)
 
@@ -370,5 +369,5 @@ if __name__ == "__main__":
                                                          "run-time": [elapsed_time]})
                                                     new_result = pd.concat([new_result, time_tracker_df], axis=1)
                                                     global_results = pd.concat([global_results, new_result])
-                                                    breakpoint()
+
                                     global_results.to_csv(path_to_results + complete_filename, index=False)

@@ -99,10 +99,12 @@ class FNNModel:
         
         return evaluation_metrics_train
     
-    def generate_parameters(self, y_train):
+    def generate_parameters(self, x, y):
         if self.update_gene != "V":
-            logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
-            self.V = np.dot(pinv(logic_outputs), y_train)
+            fuzzy_outputs = self.fuzzification_layer(x)
+            logic_outputs = self.logic_neurons_layer(fuzzy_outputs)
+            #logic_outputs = self.logic_neurons_layer(copy.deepcopy(self.fuzzy_outputs))
+            self.V = np.dot(pinv(logic_outputs), y)
         
         self.fitness = None #Devi rimuovere il fitness perche' cambiano i parametri
     
