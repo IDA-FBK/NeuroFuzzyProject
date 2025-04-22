@@ -13,7 +13,7 @@ def plot_class_confusion_matrix(split, cm, labels, path_to_exp_results):
 
     # Save confusion matrix plot
     plt.title(f"{split} - Confusion Matrix")
-    plt.savefig(path_to_exp_results+f"{split}_confusion_matrix.png")
+    plt.savefig(path_to_exp_results + f"/{split}-cm.png")
     plt.close()
 
 
