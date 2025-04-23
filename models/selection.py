@@ -13,8 +13,10 @@ def selection(
         crossover_rate,
         rng_seed,
         fitness_type,
-        x,
-        y,
+        x_train,
+        y_train,
+        x_val,
+        y_val,
         data_encoding,
         pred_method,
         map_class_dict,
@@ -43,7 +45,7 @@ def selection(
     # Calculate fitness of population
     for individual in population:
         if individual.fitness is None:
-            individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict,fast=False)[fitness_type]
+            individual.calculate_fitness(fitness_type, x_val, y_val, data_encoding, pred_method, map_class_dict,fast=False)[fitness_type]
     # End timing the computation of the fitness on the population
     end_time_pop_fit = time.time()
     fitness_pop_time = round(end_time_pop_fit - start_time_pop_fit, 4)
@@ -65,12 +67,13 @@ def selection(
     # Calculate fitness of offspring
     for individual in offspring:
         start_time_params_gen = time.time()
-        individual.generate_parameters(x, y)
+        individual.generate_parameters(x_train, y_train)
         end_time_params_gen= time.time()
         time_tracker["off_params_time"] += end_time_params_gen-start_time_params_gen
 
         start_time_fit = time.time()
-        individual.calculate_fitness(fitness_type, x, y, data_encoding, pred_method, map_class_dict, fast=False)[fitness_type]
+        # fitness on val
+        individual.calculate_fitness(fitness_type, x_val, y_val, data_encoding, pred_method, map_class_dict, fast=False)[fitness_type]
         end_time_fit = time.time()
         time_tracker["off_fit_time"] += end_time_fit-start_time_fit
 

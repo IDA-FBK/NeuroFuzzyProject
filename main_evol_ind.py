@@ -118,7 +118,7 @@ def run_experiment(
 
     x_test, y_test = test_data[0], test_data[1]
 
-    (x_train, y_train), (x_eval, y_eval) = get_train_eval_split(train_data, percentage_train=0.8)
+    (x_train, y_train), (x_val, y_val) = get_train_eval_split(train_data, percentage_train=0.8)
 
     population:List[FNNModel] = initialize_population(mu, num_mfs, update_gene, current_neuron_type, fuzzy_interpretation, activation, 
                                        optimizer, x_train, y_train, mutation_ind_rate, data_encoding, rng_seed, time_tracker)
@@ -134,7 +134,7 @@ def run_experiment(
             break
         
         population = selection(population, mu, lambda_, mutation_rate, crossover_rate, rng_seed,
-                                        fitness_function, x_train, y_train, data_encoding, pred_method,
+                                        fitness_function, x_train, y_train, x_val, y_val, data_encoding, pred_method,
                                         map_class_dict, time_tracker, selection_strategy)
         
         epoch_improoved = False
@@ -149,7 +149,7 @@ def run_experiment(
             performance_train.append(fitness_train)
 
             start_time_ind_val = time.time()
-            fitness_eval = individuo.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
+            fitness_eval = individuo.calculate_fitness(fitness_function, x_val, y_val, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             end_time_ind_val = time.time()
             tot_time_ind_val = end_time_ind_val - start_time_ind_val
 
@@ -157,7 +157,7 @@ def run_experiment(
             
             # fitness_test = individuo.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)[fitness_function]
             # performance_test.append(fitness_test)
-        
+
             if fitness_eval > best_fitness: #Save the best individuo
                 best_fitness = fitness_eval
                 best_guy = copy.deepcopy(individuo)
@@ -192,7 +192,7 @@ def run_experiment(
         generation += 1
     
     metrics_train = best_guy.calculate_fitness(fitness_function, x_train, y_train, data_encoding, pred_method, map_class_dict, update_fitness = False)
-    metrics_eval = best_guy.calculate_fitness(fitness_function, x_eval, y_eval, data_encoding, pred_method, map_class_dict, update_fitness = False)
+    metrics_eval = best_guy.calculate_fitness(fitness_function, x_val, y_val, data_encoding, pred_method, map_class_dict, update_fitness = False)
     metrics_test = best_guy.calculate_fitness(fitness_function, x_test, y_test, data_encoding, pred_method, map_class_dict, update_fitness = False)
     
     fitness_train = metrics_train[fitness_function]
@@ -369,5 +369,5 @@ if __name__ == "__main__":
                                                          "run-time": [elapsed_time]})
                                                     new_result = pd.concat([new_result, time_tracker_df], axis=1)
                                                     global_results = pd.concat([global_results, new_result])
-
+                                                    breakpoint()
                                     global_results.to_csv(path_to_results + complete_filename, index=False)
