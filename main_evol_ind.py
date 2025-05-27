@@ -369,5 +369,5 @@ if __name__ == "__main__":
                                                          "run-time": [elapsed_time]})
                                                     new_result = pd.concat([new_result, time_tracker_df], axis=1)
                                                     global_results = pd.concat([global_results, new_result])
-                                                    breakpoint()
+                                                    #breakpoint()
                                     global_results.to_csv(path_to_results + complete_filename, index=False)
